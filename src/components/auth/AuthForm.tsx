@@ -15,7 +15,7 @@ interface FormValues {
 }
 
 export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
-  const { signIn, signUp } = useApp();
+  const { signIn, signUp, backend } = useApp();
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const {
@@ -26,11 +26,13 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
 
   const isSignUp = mode === "sign-up";
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     setFormError(null);
-    const err = isSignUp
-      ? signUp(values.email, values.password, values.displayName)
-      : signIn(values.email, values.password);
+    const err = await Promise.resolve(
+      isSignUp
+        ? signUp(values.email, values.password, values.displayName)
+        : signIn(values.email, values.password),
+    );
     if (err) {
       setFormError(err);
       return;
@@ -105,7 +107,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             </Button>
           </form>
 
-          {!isSignUp && (
+          {!isSignUp && backend === "local" && (
             <div className="mt-4 rounded-xl bg-brand-50 px-3 py-2.5 text-sm text-brand-800">
               <strong>Demo login:</strong> demo@aislepilot.app · demo123
             </div>

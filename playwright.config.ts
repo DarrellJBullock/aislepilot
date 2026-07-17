@@ -19,7 +19,11 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: `npm run build && npx next start -p ${PORT}`,
+    // Force mock mode (no Supabase, mock retailer) so e2e is deterministic and
+    // offline, regardless of any .env.local. NEXT_PUBLIC_* is inlined at build.
+    command:
+      `env NEXT_PUBLIC_SUPABASE_URL= NEXT_PUBLIC_SUPABASE_ANON_KEY= USE_MOCK_RETAILER_DATA=true npm run build && ` +
+      `env NEXT_PUBLIC_SUPABASE_URL= NEXT_PUBLIC_SUPABASE_ANON_KEY= USE_MOCK_RETAILER_DATA=true npx next start -p ${PORT}`,
     url: baseURL,
     timeout: 180_000,
     reuseExistingServer: !process.env.CI,

@@ -83,6 +83,7 @@ Level Security (owner + shared-member access), plus a profile-creation trigger.
 | `npm run test:e2e` | Playwright (`npx playwright install` first) |
 | `npm run seed` | Seed Supabase reference data (mock mode: no-op) |
 | `npm run kroger:smoke -- [zip]` | Live Kroger API end-to-end check (needs credentials; no-op without) |
+| `npm run supabase:smoke` | Live Supabase auth + RLS + CRUD check (needs schema pushed) |
 
 ## Testing
 ```bash
@@ -99,8 +100,14 @@ Vercel-compatible: import the repo, add any optional env vars, deploy. Works wit
 zero env vars (mock mode).
 
 ## Known limitations
-- Persistence in mock mode is **per-browser** (localStorage); "shared lists" and
-  "realtime" are simulated locally until Supabase is configured.
+- **Backend switches on config:** with Supabase env vars set, the app uses real
+  Supabase Auth + Postgres (persistence, RLS, realtime list/item updates). Without
+  them it runs the **per-browser localStorage** mock store, where "shared lists"
+  and "realtime" are simulated locally. Both expose the same `useApp()` interface.
+- In Supabase mode, requires the schema (`supabase/schema.sql`) pushed and
+  **"Confirm email" disabled** (Auth → Providers → Email) for instant sign-up.
+  Invites are stored by email; a member sees a shared list once their account's
+  `user_id` is linked (full invite-acceptance is a follow-up).
 - The service worker registers only in a production build (`npm run build && npm run start`);
   regenerate icons with `node scripts/generate-icons.mjs` if the logo changes.
 - `KrogerProvider` is **fully implemented** (OAuth client-credentials + token

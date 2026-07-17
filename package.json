@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "seed": "tsx scripts/seed.ts",
-    "kroger:smoke": "tsx scripts/kroger-smoke.ts"
+    "kroger:smoke": "tsx scripts/kroger-smoke.ts",
+    "supabase:smoke": "tsx scripts/supabase-smoke.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
