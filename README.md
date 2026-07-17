@@ -23,6 +23,7 @@ Mode — collecting items as you go.
 - **Shared lists** — invite by email, manage members, see who collected each item
 - **Barcode foundation** — `lookupBarcode` provider method + `/api/retailers/barcode`
 - **Saved products & purchase history** — foundations in the data model + settings
+- **Installable PWA** — web app manifest, maskable icons, and a service worker with an offline fallback and cached app shell (registered in production)
 - **Responsive, accessible UI** — mobile-first, keyboard + screen-reader friendly, loading/empty/error states
 
 ## Stack
@@ -95,6 +96,8 @@ zero env vars (mock mode).
 ## Known limitations
 - Persistence in mock mode is **per-browser** (localStorage); "shared lists" and
   "realtime" are simulated locally until Supabase is configured.
+- The service worker registers only in a production build (`npm run build && npm run start`);
+  regenerate icons with `node scripts/generate-icons.mjs` if the logo changes.
 - `KrogerProvider` is a typed **shell** — live HTTP calls + OAuth are not wired
   (see below); the app falls back to mock data.
 - Sync/offline indicators reflect network state and local writes; true multi-device
