@@ -78,6 +78,7 @@ Level Security (owner + shared-member access), plus a profile-creation trigger.
 | `npm run test` | Vitest unit + integration |
 | `npm run test:e2e` | Playwright (`npx playwright install` first) |
 | `npm run seed` | Seed Supabase reference data (mock mode: no-op) |
+| `npm run kroger:smoke -- [zip]` | Live Kroger API end-to-end check (needs credentials; no-op without) |
 
 ## Testing
 ```bash
@@ -122,6 +123,10 @@ The `KrogerProvider` is already implemented — you only need credentials:
    USE_MOCK_RETAILER_DATA=false
    ```
    The factory then selects `KrogerProvider` automatically.
+3. Verify the live path end-to-end:
+   ```bash
+   npm run kroger:smoke -- 45202   # auth → store search → products → barcode
+   ```
 
 **What it does** (`src/providers/kroger.ts` + `kroger-map.ts`):
 - OAuth2 client-credentials token fetch with in-memory caching + 401 retry.
