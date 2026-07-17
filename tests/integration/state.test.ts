@@ -81,6 +81,16 @@ describe("lists and items", () => {
     expect(item.product?.externalId).toBe("milk-2pct-gal");
   });
 
+  it("adds a scanned product as an already-matched item", () => {
+    const product = catalogForStore("store-riverside").find((p) => p.externalId === "eggs-large-dozen")!;
+    state = S.addMatchedItem(state, listId, product, 2);
+    const item = state.lists.find((l) => l.id === listId)!.items[0];
+    expect(item.status).toBe("available");
+    expect(item.quantity).toBe(2);
+    expect(item.product?.externalId).toBe("eggs-large-dozen");
+    expect(item.rawText).toBe(product.name);
+  });
+
   it("collects an item and records the collector", () => {
     state = S.addItem(state, listId, { rawText: "Milk" });
     const itemId = state.lists.find((l) => l.id === listId)!.items[0].id;

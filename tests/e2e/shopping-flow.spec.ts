@@ -58,6 +58,28 @@ test("start shopping mode and collect an item, totals update", async ({ page }) 
   }).toPass();
 });
 
+test("scan a barcode to add a matched item", async ({ page, context }) => {
+  await context.grantPermissions(["camera"]).catch(() => {});
+  await signInDemo(page);
+  await page.getByText("Weekly Groceries").click();
+  await expect(page.getByRole("heading", { name: "Weekly Groceries" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Scan a barcode to add an item" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+
+  // Fall back to manual entry (no real camera in CI); the field appears either
+  // immediately (unsupported) or after the camera fails.
+  const manualLink = page.getByRole("button", { name: /Enter the number instead/ });
+  if (await manualLink.isVisible().catch(() => false)) await manualLink.click();
+
+  const upc = page.getByLabel(/Barcode number/);
+  await expect(upc).toBeVisible({ timeout: 10_000 });
+  await upc.fill("001111060201"); // Large Grade A Eggs (mock UPC)
+  await page.getByRole("button", { name: "Look up" }).click();
+
+  await expect(page.getByText(/Added /)).toBeVisible();
+});
+
 test("invite a member to a shared list", async ({ page }) => {
   await signInDemo(page);
   await page.getByText("Weekly Groceries").click();

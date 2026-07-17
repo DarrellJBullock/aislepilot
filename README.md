@@ -21,7 +21,7 @@ Mode — collecting items as you go.
 - **Department & aisle sorting** — sort by store route, price, or name; grouped by department in route order
 - **Shopping Mode** — mobile focus card, large touch actions (collected / skip / unavailable / substitute), quantity edit, next/prev, collapsible completed section, sticky totals, **offline state + sync status**, optimistic updates
 - **Shared lists** — invite by email, manage members, see who collected each item
-- **Barcode foundation** — `lookupBarcode` provider method + `/api/retailers/barcode`
+- **Barcode scanner** — camera scanning via the native `BarcodeDetector` API (zero deps), with manual UPC entry fallback; a scan looks up the product and adds it pre-matched
 - **Saved products & purchase history** — foundations in the data model + settings
 - **Installable PWA** — web app manifest, maskable icons, and a service worker with an offline fallback and cached app shell (registered in production)
 - **Responsive, accessible UI** — mobile-first, keyboard + screen-reader friendly, loading/empty/error states
@@ -105,7 +105,9 @@ zero env vars (mock mode).
   search is zip-based** (Kroger's Locations API is geo-filtered).
 - Sync/offline indicators reflect network state and local writes; true multi-device
   sync requires the Supabase path.
-- Barcode support is entry/lookup foundation, not a camera scanner.
+- Barcode camera scanning uses the native `BarcodeDetector` API (Chromium/Android;
+  requires HTTPS or localhost for camera access). Browsers without it — notably
+  Safari/Firefox — automatically get the manual UPC-entry fallback.
 - Out of scope by design: payments, checkout/delivery, indoor GPS, live inventory
   polling, loyalty sync, paid AI, non-Kroger retailers, native apps.
 

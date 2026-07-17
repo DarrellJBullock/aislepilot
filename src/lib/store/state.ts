@@ -155,6 +155,26 @@ export function addItemsBulk(
   return next;
 }
 
+/** Add an item already matched to a product (e.g. from a barcode scan). */
+export function addMatchedItem(
+  state: AppState,
+  listId: string,
+  product: Product,
+  quantity = 1,
+): AppState {
+  const item: ShoppingListItem = {
+    id: uid("item"),
+    listId,
+    rawText: product.name,
+    quantity: Math.max(1, quantity),
+    priority: "normal",
+    status: "available",
+    product,
+    updatedAt: now(),
+  };
+  return mapList(state, listId, (l) => ({ ...l, items: [...l.items, item] }));
+}
+
 export function parseBulkLine(line: string): { rawText: string; quantity: number } {
   const prefix = line.match(/^(\d+)\s*[xX]?\s+(.+)$/);
   if (prefix) return { rawText: prefix[2].trim(), quantity: Number(prefix[1]) };

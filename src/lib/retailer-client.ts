@@ -26,3 +26,14 @@ export async function fetchProducts(
   if (!res.ok) return { products: [], live: false };
   return res.json();
 }
+
+export async function fetchBarcode(
+  upc: string,
+  storeId?: string,
+): Promise<{ product: Product | null; live: boolean }> {
+  const qs = new URLSearchParams({ upc });
+  if (storeId) qs.set("storeId", storeId);
+  const res = await fetch(`/api/retailers/barcode?${qs.toString()}`);
+  if (!res.ok) return { product: null, live: false };
+  return res.json();
+}

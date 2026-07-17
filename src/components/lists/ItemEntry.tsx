@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Plus, Rows3, CornerDownLeft } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
 import { Button, Input, Textarea } from "@/components/ui";
+import { ScanToAddButton } from "@/components/products/ScanToAddButton";
 
-export function ItemEntry({ listId }: { listId: string }) {
+export function ItemEntry({ listId, storeId }: { listId: string; storeId?: string }) {
   const { addItem, addItemsBulk } = useApp();
   const [mode, setMode] = useState<"single" | "bulk">("single");
   const [text, setText] = useState("");
@@ -45,6 +46,9 @@ export function ItemEntry({ listId }: { listId: string }) {
         >
           <Rows3 size={13} /> Paste list
         </button>
+        <div className="ml-auto">
+          <ScanToAddButton listId={listId} storeId={storeId} />
+        </div>
       </div>
 
       {mode === "single" ? (

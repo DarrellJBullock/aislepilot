@@ -47,6 +47,7 @@ interface AppContextValue {
   // items
   addItem: (listId: string, input: Parameters<typeof S.addItem>[2]) => void;
   addItemsBulk: (listId: string, text: string) => void;
+  addMatchedItem: (listId: string, product: Product, quantity?: number) => void;
   updateItem: (
     listId: string,
     itemId: string,
@@ -173,6 +174,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addItem: (listId, input) => setState((s) => S.addItem(s, listId, input)),
       addItemsBulk: (listId, text) =>
         setState((s) => S.addItemsBulk(s, listId, text)),
+      addMatchedItem: (listId, product, quantity) =>
+        setState((s) => S.addMatchedItem(s, listId, product, quantity)),
       updateItem: (listId, itemId, patch) =>
         setState((s) => S.updateItem(s, listId, itemId, patch)),
       removeItem: (listId, itemId) =>

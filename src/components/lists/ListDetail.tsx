@@ -82,7 +82,7 @@ export function ListDetail({ listId }: { listId: string }) {
         </p>
       )}
 
-      <ItemEntry listId={list.id} />
+      <ItemEntry listId={list.id} storeId={list.storeId} />
       <ItemList list={list} />
 
       <ListSettings list={list} open={settings} onClose={() => setSettings(false)} />
