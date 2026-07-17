@@ -1,6 +1,10 @@
 # AislePilot 🛒
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-store--pilot--black.vercel.app-18b365?logo=vercel&logoColor=white)](https://store-pilot-black.vercel.app)
+
 **Your list. Your route. Your total.**
+
+**▶ Live demo:** https://store-pilot-black.vercel.app — sign in with `demo@aislepilot.app` / `demo123`.
 
 A mobile-first shopping assistant for Kroger-family supermarkets. Build a list,
 match each entry to an exact store product, see prices and aisles, track your
