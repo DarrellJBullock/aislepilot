@@ -98,8 +98,10 @@ zero env vars (mock mode).
   "realtime" are simulated locally until Supabase is configured.
 - The service worker registers only in a production build (`npm run build && npm run start`);
   regenerate icons with `node scripts/generate-icons.mjs` if the logo changes.
-- `KrogerProvider` is a typed **shell** — live HTTP calls + OAuth are not wired
-  (see below); the app falls back to mock data.
+- `KrogerProvider` is **fully implemented** (OAuth client-credentials + token
+  caching, Locations/Products mapping, availability, barcode). It's inactive
+  until you add credentials; without them the app uses mock data. Live **store
+  search is zip-based** (Kroger's Locations API is geo-filtered).
 - Sync/offline indicators reflect network state and local writes; true multi-device
   sync requires the Supabase path.
 - Barcode support is entry/lookup foundation, not a camera scanner.
@@ -107,18 +109,32 @@ zero env vars (mock mode).
   polling, loyalty sync, paid AI, non-Kroger retailers, native apps.
 
 ## Live Kroger integration steps
-1. Register an app at the Kroger Developer Portal; get a client ID/secret.
-2. Set `KROGER_CLIENT_ID`, `KROGER_CLIENT_SECRET`, `KROGER_BASE_URL`, and
-   `USE_MOCK_RETAILER_DATA=false`. The factory then selects `KrogerProvider`.
-3. Implement the methods in `src/providers/kroger.ts`:
-   - Client-credentials OAuth token fetch + in-memory cache (`/connect/oauth2/token`).
-   - `GET /locations` → `searchStores`/`getStore` (map to `Store`).
-   - `GET /products` → `searchProducts`/`getProduct` (map to normalized `Product`;
-     carry `locationSource: "retailer_verified"` only when the API confirms aisle).
-   - Product-by-UPC → `lookupBarcode`.
-   - Availability from product `items[].inventory` → `getAvailability`.
-4. Keep all calls server-side; the browser continues to use `/api/retailers/*`.
-5. Optionally cache responses in `products_cache` / `store_product_locations`.
+The `KrogerProvider` is already implemented — you only need credentials:
+
+1. Register an app at **developer.kroger.com** and copy the **Client ID** and
+   **Client Secret** (the client-credentials flow with scope `product.compact`
+   covers stores, products, prices, availability, and barcode — no user login).
+2. Set the env vars and flip off mock mode:
+   ```bash
+   KROGER_CLIENT_ID=...
+   KROGER_CLIENT_SECRET=...
+   KROGER_BASE_URL=https://api.kroger.com/v1
+   USE_MOCK_RETAILER_DATA=false
+   ```
+   The factory then selects `KrogerProvider` automatically.
+
+**What it does** (`src/providers/kroger.ts` + `kroger-map.ts`):
+- OAuth2 client-credentials token fetch with in-memory caching + 401 retry.
+- `GET /locations?filter.zipCode.near=` → `searchStores` (zip-based) / `getStore`.
+- `GET /products?filter.term=&filter.locationId=` → `searchProducts` / `getProduct`,
+  mapped to the normalized `Product` (price, promo, size, image, availability).
+- Aisle data is marked `retailer_verified` only when Kroger returns it for the
+  requested store; otherwise it's a `category_estimate`.
+- UPC term search → `lookupBarcode`; `items[].inventory.stockLevel` → availability.
+- All calls stay server-side; the browser continues to use `/api/retailers/*`.
+
+Optionally cache responses into `products_cache` / `store_product_locations` to
+stay within Kroger's per-day rate limits.
 
 ## Documentation
 - `docs/implementation-plan.md` · `docs/architecture.md` · `docs/design-system.md`
