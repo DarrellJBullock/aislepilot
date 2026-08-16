@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { MapPin, Users, ShoppingBasket } from "lucide-react";
-import type { ShoppingList } from "@/domain/types";
-import { computeTotals, formatCurrency } from "@/domain/pricing";
-import { computeProgress } from "@/domain/progress";
-import { findStore } from "@/data/mock/stores";
+import type { ShoppingList } from "@aislepilot/domain/types";
+import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
+import { computeProgress } from "@aislepilot/domain/progress";
+import { findStore } from "@aislepilot/domain/mock/stores";
 import { Card, Progress, Badge } from "@/components/ui";
 
 export function ListCard({ list }: { list: ShoppingList }) {

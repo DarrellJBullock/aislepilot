@@ -1,4 +1,4 @@
-import type { RetailerProvider } from "@/domain/provider";
+import type { RetailerProvider } from "@aislepilot/domain/provider";
 import type {
   Product,
   ProductAvailability,
@@ -6,15 +6,15 @@ import type {
   RetailerCapabilities,
   Store,
   StoreSearchInput,
-} from "@/domain/types";
+} from "@aislepilot/domain/types";
 import type {
   KrogerItemResponse,
   KrogerListResponse,
   KrogerLocation,
   KrogerProduct,
   KrogerTokenResponse,
-} from "./kroger-types";
-import { mapProduct, mapStore } from "./kroger-map";
+} from "@aislepilot/domain/providers/kroger-types";
+import { mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
 
 export interface KrogerConfig {
   clientId: string;

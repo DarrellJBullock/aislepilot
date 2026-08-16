@@ -5,7 +5,7 @@ import {
   itemSubtotal,
   computeTotals,
   formatCurrency,
-} from "@/domain/pricing";
+} from "@aislepilot/domain/pricing";
 import { makeProduct, makeItem, makeList } from "../factories";
 
 describe("effectiveUnitPrice", () => {

@@ -1,5 +1,5 @@
-import type { Product } from "@/domain/types";
-import { effectiveUnitPrice, formatCurrency, isOnSale } from "@/domain/pricing";
+import type { Product } from "@aislepilot/domain/types";
+import { effectiveUnitPrice, formatCurrency, isOnSale } from "@aislepilot/domain/pricing";
 import { cn } from "@/lib/utils";
 
 export function PriceTag({

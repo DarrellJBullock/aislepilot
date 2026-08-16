@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { Store } from "@/domain/types";
+import type { Store } from "@aislepilot/domain/types";
 import { useApp } from "@/lib/store/provider";
 import { StorePicker } from "@/components/stores/StorePicker";
 import { Button, Input, Textarea, Label, Card, CardBody, FieldError } from "@/components/ui";

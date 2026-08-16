@@ -10,8 +10,8 @@
  */
 import { readFileSync } from "node:fs";
 import { KrogerProvider } from "../src/providers/kroger";
-import { effectiveUnitPrice } from "../src/domain/pricing";
-import { locationConfidence } from "../src/domain/status/location";
+import { effectiveUnitPrice } from "@aislepilot/domain/pricing";
+import { locationConfidence } from "@aislepilot/domain/status/location";
 
 // Minimal .env.local loader (no dependency on dotenv).
 function loadEnvLocal() {

@@ -1,9 +1,9 @@
 "use client";
 
 import { AlertTriangle, TrendingDown } from "lucide-react";
-import type { ShoppingList } from "@/domain/types";
-import { computeTotals, formatCurrency } from "@/domain/pricing";
-import { budgetSuggestions } from "@/domain/assignment";
+import type { ShoppingList } from "@aislepilot/domain/types";
+import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
+import { budgetSuggestions } from "@aislepilot/domain/assignment";
 import { Card, Progress } from "@/components/ui";
 
 export function TotalsSummary({ list }: { list: ShoppingList }) {

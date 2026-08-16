@@ -11,8 +11,8 @@ import {
   ChevronDown,
   Flag,
 } from "lucide-react";
-import type { ShoppingListItem } from "@/domain/types";
-import { itemSubtotal, formatCurrency } from "@/domain/pricing";
+import type { ShoppingListItem } from "@aislepilot/domain/types";
+import { itemSubtotal, formatCurrency } from "@aislepilot/domain/pricing";
 import { useApp } from "@/lib/store/provider";
 import {
   ProductImage,

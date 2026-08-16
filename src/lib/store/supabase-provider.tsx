@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Profile } from "@/domain/types";
-import * as S from "./state";
+import type { Profile } from "@aislepilot/domain/types";
+import * as S from "@aislepilot/domain/store/state";
 import { createClient } from "@/lib/supabase/client";
 import { AppContext, type AppContextValue } from "./context";
-import { rowToList, itemToRow, memberToRow, type ListRow } from "./supabase-map";
-import { displayNameFromEmail } from "@/lib/utils";
+import { rowToList, itemToRow, memberToRow, type ListRow } from "@aislepilot/domain/store/supabase-map";
+import { displayNameFromEmail } from "@aislepilot/domain/utils";
 
 const SELECT = "*, shopping_list_items(*), shopping_list_members(*)";
 
@@ -19,6 +19,7 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const stateRef = useRef(state);
   stateRef.current = state;
+  const channelRef = useRef<ReturnType<SupabaseClient["channel"]> | null>(null);
 
   // Apply a pure state op synchronously so callers can read the result + push
   // the corresponding write to Supabase.
@@ -87,34 +88,14 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
   // Initial session + auth subscription + realtime.
   useEffect(() => {
     if (!supabase) return;
-    let channel: ReturnType<SupabaseClient["channel"]> | null = null;
+    const db = supabase;
 
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
-      if (session?.user) {
-        await setSession(supabase, session.user.id, session.user.email ?? "");
-        channel = subscribeRealtime(supabase);
-      }
-      setReady(true);
-    })();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setSession(supabase, session.user.id, session.user.email ?? "");
-        if (!channel) channel = subscribeRealtime(supabase);
-      } else {
-        setState(S.emptyState());
-        stateRef.current = S.emptyState();
-        if (channel) {
-          supabase.removeChannel(channel);
-          channel = null;
-        }
-      }
-    });
-
-    function subscribeRealtime(db: SupabaseClient) {
-      return db
+    // Create the realtime channel exactly once (guarded by a ref). Calling
+    // db.channel() with the same topic reuses an existing channel, and adding
+    // `.on()` after `.subscribe()` throws — hence the single-instance guard.
+    const ensureRealtime = () => {
+      if (channelRef.current) return;
+      channelRef.current = db
         .channel("aislepilot-lists")
         .on(
           "postgres_changes",
@@ -127,11 +108,39 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
           () => loadLists(db),
         )
         .subscribe();
-    }
+    };
+
+    const teardownRealtime = () => {
+      if (channelRef.current) {
+        db.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+
+    (async () => {
+      const { data } = await db.auth.getSession();
+      const session = data.session;
+      if (session?.user) {
+        await setSession(db, session.user.id, session.user.email ?? "");
+        ensureRealtime();
+      }
+      setReady(true);
+    })();
+
+    const { data: sub } = db.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setSession(db, session.user.id, session.user.email ?? "");
+        ensureRealtime();
+      } else {
+        setState(S.emptyState());
+        stateRef.current = S.emptyState();
+        teardownRealtime();
+      }
+    });
 
     return () => {
       sub.subscription.unsubscribe();
-      if (channel) supabase.removeChannel(channel);
+      teardownRealtime();
     };
   }, [supabase, setSession, loadLists]);
 

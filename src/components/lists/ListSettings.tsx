@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Archive, Trash2, ArchiveRestore } from "lucide-react";
-import type { ShoppingList, Store } from "@/domain/types";
+import type { ShoppingList, Store } from "@aislepilot/domain/types";
 import { useApp } from "@/lib/store/provider";
 import { StorePicker } from "@/components/stores/StorePicker";
 import { Modal, Input, Textarea, Label, Button } from "@/components/ui";

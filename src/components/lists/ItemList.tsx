@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { ArrowUpDown } from "lucide-react";
-import type { ShoppingList, ItemStatus } from "@/domain/types";
-import { sortItems, groupByDepartment, type SortMode } from "@/domain/routing";
-import { findStore } from "@/data/mock/stores";
+import type { ShoppingList, ItemStatus } from "@aislepilot/domain/types";
+import { sortItems, groupByDepartment, type SortMode } from "@aislepilot/domain/routing";
+import { findStore } from "@aislepilot/domain/mock/stores";
 import { EmptyState } from "@/components/ui";
 import { ItemRow } from "./ItemRow";
 

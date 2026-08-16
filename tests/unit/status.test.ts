@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { canTransition, nextStatus, isResolved, statusAfterMatch } from "@/domain/status";
-import { locationConfidence } from "@/domain/status/location";
+import { canTransition, nextStatus, isResolved, statusAfterMatch } from "@aislepilot/domain/status";
+import { locationConfidence } from "@aislepilot/domain/status/location";
 
 describe("status transitions", () => {
   it("allows matched -> available -> collected", () => {

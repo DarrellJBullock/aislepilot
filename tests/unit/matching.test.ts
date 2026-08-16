@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { normalize, tokenize, scoreProduct, matchProducts } from "@/domain/matching";
-import { catalogForStore } from "@/data/mock/stores";
+import { normalize, tokenize, scoreProduct, matchProducts } from "@aislepilot/domain/matching";
+import { catalogForStore } from "@aislepilot/domain/mock/stores";
 import { makeProduct } from "../factories";
 
 describe("normalize / tokenize", () => {

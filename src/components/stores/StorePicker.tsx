@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MapPin, Search, Check } from "lucide-react";
-import type { Store } from "@/domain/types";
+import type { Store } from "@aislepilot/domain/types";
 import { fetchStores } from "@/lib/retailer-client";
 import { Input, Skeleton, DemoBadge, Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";

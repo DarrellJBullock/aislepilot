@@ -2,6 +2,10 @@
   "name": "aislepilot",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +20,9 @@
     "supabase:smoke": "tsx scripts/supabase-smoke.ts"
   },
   "dependencies": {
+    "@aislepilot/domain": "*",
+    "@aislepilot/design-tokens": "*",
+    "@aislepilot/validation": "*",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "lucide-react": "^0.454.0",

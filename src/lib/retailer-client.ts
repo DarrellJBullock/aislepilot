@@ -1,6 +1,6 @@
 "use client";
 
-import type { Product, Store } from "@/domain/types";
+import type { Product, Store } from "@aislepilot/domain/types";
 
 /** Browser helpers that call server retailer API routes (credentials stay server-side). */
 

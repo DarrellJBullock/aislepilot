@@ -4,6 +4,11 @@ const nextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
+  transpilePackages: [
+    "@aislepilot/domain",
+    "@aislepilot/design-tokens",
+    "@aislepilot/validation",
+  ],
 };
 
 export default nextConfig;

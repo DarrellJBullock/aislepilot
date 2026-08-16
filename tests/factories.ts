@@ -1,4 +1,4 @@
-import type { Product, ShoppingList, ShoppingListItem } from "@/domain/types";
+import type { Product, ShoppingList, ShoppingListItem } from "@aislepilot/domain/types";
 
 export function makeProduct(overrides: Partial<Product> = {}): Product {
   return {

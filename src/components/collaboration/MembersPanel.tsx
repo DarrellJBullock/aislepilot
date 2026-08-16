@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { UserPlus, X, Users } from "lucide-react";
-import type { ShoppingList } from "@/domain/types";
+import type { ShoppingList } from "@aislepilot/domain/types";
 import { useApp } from "@/lib/store/provider";
 import { Modal, Input, Button, Badge } from "@/components/ui";
 

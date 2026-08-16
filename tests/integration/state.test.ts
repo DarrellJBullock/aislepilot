@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import type { AppState } from "@/lib/store/state";
-import * as S from "@/lib/store/state";
+import type { AppState } from "@aislepilot/domain/store/state";
+import * as S from "@aislepilot/domain/store/state";
 import { signUp, signIn, signOut, currentProfile } from "@/lib/store/auth";
-import { catalogForStore } from "@/data/mock/stores";
+import { catalogForStore } from "@aislepilot/domain/mock/stores";
 
 function authedState(): AppState {
   const base = S.emptyState();

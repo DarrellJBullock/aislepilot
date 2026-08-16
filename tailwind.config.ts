@@ -1,34 +1,20 @@
 import type { Config } from "tailwindcss";
+import { brand, ink, shadow } from "@aislepilot/design-tokens";
 
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#eefdf3",
-          100: "#d6f9e2",
-          200: "#b0f1c9",
-          300: "#79e4a8",
-          400: "#3fce82",
-          500: "#18b365",
-          600: "#0c9152",
-          700: "#0b7344",
-          800: "#0d5b39",
-          900: "#0c4a30",
-        },
-        ink: {
-          DEFAULT: "#111826",
-          soft: "#3b4557",
-          muted: "#6b7688",
-        },
+        brand,
+        ink,
       },
       borderRadius: {
         xl: "1rem",
         "2xl": "1.5rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(16,24,40,0.04), 0 4px 16px rgba(16,24,40,0.06)",
+        card: shadow.card.web,
       },
       keyframes: {
         "slide-up": {

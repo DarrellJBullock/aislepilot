@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, MapPin } from "lucide-react";
-import type { Product } from "@/domain/types";
+import type { Product } from "@aislepilot/domain/types";
 import {
   ProductImage,
   PriceTag,

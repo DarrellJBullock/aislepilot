@@ -8,8 +8,8 @@
  * demo data in the browser automatically.
  */
 import { createClient } from "@supabase/supabase-js";
-import { MOCK_STORES, allMockProducts } from "../src/data/mock/stores";
-import { DEPARTMENTS } from "../src/data/mock/departments";
+import { MOCK_STORES, allMockProducts } from "@aislepilot/domain/mock/stores";
+import { DEPARTMENTS } from "@aislepilot/domain/mock/departments";
 
 async function main() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

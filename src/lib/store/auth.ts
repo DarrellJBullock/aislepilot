@@ -1,6 +1,6 @@
-import type { Profile } from "@/domain/types";
-import type { AppState } from "./state";
-import { uid, now, displayNameFromEmail } from "@/lib/utils";
+import type { Profile } from "@aislepilot/domain/types";
+import type { AppState } from "@aislepilot/domain/store/state";
+import { uid, now, displayNameFromEmail } from "@aislepilot/domain/utils";
 
 export interface AuthResult {
   state: AppState;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { sortItems, groupByDepartment } from "@/domain/routing";
-import { findStore } from "@/data/mock/stores";
+import { sortItems, groupByDepartment } from "@aislepilot/domain/routing";
+import { findStore } from "@aislepilot/domain/mock/stores";
 import { makeItem, makeProduct } from "../factories";
 
 const store = findStore("store-riverside");

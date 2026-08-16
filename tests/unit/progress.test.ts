@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeProgress } from "@/domain/progress";
+import { computeProgress } from "@aislepilot/domain/progress";
 import { makeItem, makeList, makeProduct } from "../factories";
 
 describe("computeProgress", () => {

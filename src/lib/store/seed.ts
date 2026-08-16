@@ -1,8 +1,8 @@
-import type { AppState } from "./state";
-import { emptyState } from "./state";
-import * as S from "./state";
+import type { AppState } from "@aislepilot/domain/store/state";
+import { emptyState } from "@aislepilot/domain/store/state";
+import * as S from "@aislepilot/domain/store/state";
 import { signUp } from "./auth";
-import { catalogForStore } from "@/data/mock/stores";
+import { catalogForStore } from "@aislepilot/domain/mock/stores";
 
 /**
  * Build an initial demo state with a sample account and a pre-filled list so a

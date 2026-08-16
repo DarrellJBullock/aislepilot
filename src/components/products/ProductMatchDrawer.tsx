@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-import type { Product } from "@/domain/types";
+import type { Product } from "@aislepilot/domain/types";
 import { fetchProducts } from "@/lib/retailer-client";
 import {
   Modal,

@@ -1,6 +1,6 @@
 import "server-only";
-import type { RetailerProvider } from "@/domain/provider";
-import { MockKrogerProvider } from "@/providers/mock-kroger";
+import type { RetailerProvider } from "@aislepilot/domain/provider";
+import { MockKrogerProvider } from "@aislepilot/domain/providers/mock-kroger";
 import { KrogerProvider } from "@/providers/kroger";
 
 let cached: RetailerProvider | null = null;

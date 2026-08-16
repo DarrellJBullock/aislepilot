@@ -16,11 +16,11 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
-import { findStore } from "@/data/mock/stores";
-import { sortItems } from "@/domain/routing";
-import { computeProgress } from "@/domain/progress";
-import { computeTotals, formatCurrency, itemSubtotal } from "@/domain/pricing";
-import { isResolved } from "@/domain/status";
+import { findStore } from "@aislepilot/domain/mock/stores";
+import { sortItems } from "@aislepilot/domain/routing";
+import { computeProgress } from "@aislepilot/domain/progress";
+import { computeTotals, formatCurrency, itemSubtotal } from "@aislepilot/domain/pricing";
+import { isResolved } from "@aislepilot/domain/status";
 import { useSyncStatus } from "@/services/offline/useSyncStatus";
 import {
   Button,

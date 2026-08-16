@@ -1,5 +1,5 @@
-import type { Availability, ItemStatus, LocationSource } from "@/domain/types";
-import { locationConfidence } from "@/domain/status/location";
+import type { Availability, ItemStatus, LocationSource } from "@aislepilot/domain/types";
+import { locationConfidence } from "@aislepilot/domain/status/location";
 import { Badge } from "./Badge";
 import { ShieldCheck, MapPin, Sparkles } from "lucide-react";
 

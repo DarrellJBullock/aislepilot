@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, LogOut, Receipt, Database } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
-import { formatCurrency } from "@/domain/pricing";
+import { formatCurrency } from "@aislepilot/domain/pricing";
 import { Card, CardBody, Input, Label, Button, Badge } from "@/components/ui";
 
 export function SettingsView() {

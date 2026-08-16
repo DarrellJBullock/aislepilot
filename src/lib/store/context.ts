@@ -7,8 +7,8 @@ import type {
   Product,
   Profile,
   ShoppingList,
-} from "@/domain/types";
-import type * as S from "./state";
+} from "@aislepilot/domain/types";
+import type * as S from "@aislepilot/domain/store/state";
 
 /**
  * The app store interface. Two backends implement it identically:

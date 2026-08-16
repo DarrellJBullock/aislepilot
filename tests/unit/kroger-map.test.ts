@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { mapProduct, mapStore } from "@/providers/kroger-map";
-import type { KrogerLocation, KrogerProduct } from "@/providers/kroger-types";
+import { mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
+import type { KrogerLocation, KrogerProduct } from "@aislepilot/domain/providers/kroger-types";
 
 describe("mapStore", () => {
   it("normalizes a Kroger location", () => {

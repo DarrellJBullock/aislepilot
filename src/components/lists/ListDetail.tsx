@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, Settings2, Users, ShoppingCart, MapPin } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
-import { findStore } from "@/data/mock/stores";
+import { findStore } from "@aislepilot/domain/mock/stores";
 import { Button, Badge, EmptyState } from "@/components/ui";
 import { TotalsSummary } from "./TotalsSummary";
 import { ItemEntry } from "./ItemEntry";

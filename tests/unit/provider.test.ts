@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { MockKrogerProvider } from "@/providers/mock-kroger";
+import { MockKrogerProvider } from "@aislepilot/domain/providers/mock-kroger";
 
 const provider = new MockKrogerProvider();
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import type { ShoppingList } from "@/domain/types";
-import * as S from "./state";
+import type { ShoppingList } from "@aislepilot/domain/types";
+import * as S from "@aislepilot/domain/store/state";
 import * as Auth from "./auth";
 import { seedDemoState } from "./seed";
 import { AppContext, type AppContextValue } from "./context";

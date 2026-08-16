@@ -1,0 +1,29 @@
+{
+  "name": "@aislepilot/domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./provider": "./src/provider.ts",
+    "./utils": "./src/utils.ts",
+    "./matching": "./src/matching/index.ts",
+    "./pricing": "./src/pricing/index.ts",
+    "./progress": "./src/progress/index.ts",
+    "./routing": "./src/routing/index.ts",
+    "./status": "./src/status/index.ts",
+    "./status/location": "./src/status/location.ts",
+    "./assignment": "./src/assignment/index.ts",
+    "./mock/departments": "./src/mock/departments.ts",
+    "./mock/products": "./src/mock/products.ts",
+    "./mock/stores": "./src/mock/stores.ts",
+    "./providers/mock-kroger": "./src/providers/mock-kroger.ts",
+    "./providers/kroger-types": "./src/providers/kroger-types.ts",
+    "./providers/kroger-map": "./src/providers/kroger-map.ts",
+    "./store/state": "./src/store/state.ts",
+    "./store/supabase-map": "./src/store/supabase-map.ts"
+  }
+}
