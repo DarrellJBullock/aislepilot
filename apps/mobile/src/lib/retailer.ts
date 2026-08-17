@@ -45,6 +45,17 @@ export async function searchStores(
 }
 
 export async function getStore(storeId: string): Promise<Store | null> {
+  if (API_BASE_URL) {
+    try {
+      const res = await timedFetch(`${API_BASE_URL}/api/retailers/stores/${encodeURIComponent(storeId)}`);
+      if (res.ok) {
+        const data = (await res.json()) as { store: Store | null };
+        if (data.store) return data.store;
+      }
+    } catch {
+      // fall through to local mock
+    }
+  }
   try {
     return await mock.getStore(storeId);
   } catch {

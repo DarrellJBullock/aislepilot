@@ -39,7 +39,7 @@ export function createList(
   const ownerId = state.sessionUserId!;
   const profile = state.profiles[ownerId];
   const list: ShoppingList = {
-    id: uid("list"),
+    id: uid(),
     ownerId,
     name: input.name.trim() || "Untitled list",
     notes: input.notes?.trim() || undefined,
@@ -51,7 +51,7 @@ export function createList(
     items: [],
     members: [
       {
-        id: uid("member"),
+        id: uid(),
         listId: "",
         email: profile?.email ?? "",
         displayName: profile?.displayName ?? "Owner",
@@ -95,7 +95,7 @@ export function duplicateList(
 ): { state: AppState; id: string } {
   const source = state.lists.find((l) => l.id === id);
   if (!source) return { state, id };
-  const newId = uid("list");
+  const newId = uid();
   const copy: ShoppingList = {
     ...source,
     id: newId,
@@ -105,12 +105,12 @@ export function duplicateList(
     updatedAt: now(),
     items: source.items.map((i) => ({
       ...i,
-      id: uid("item"),
+      id: uid(),
       listId: newId,
       status: i.product ? "available" : "unmatched",
       collectedBy: undefined,
     })),
-    members: source.members.map((m) => ({ ...m, id: uid("member"), listId: newId })),
+    members: source.members.map((m) => ({ ...m, id: uid(), listId: newId })),
   };
   return { state: { ...state, lists: [copy, ...state.lists] }, id: newId };
 }
@@ -125,7 +125,7 @@ export function addItem(
   const text = input.rawText.trim();
   if (!text) return state;
   const item: ShoppingListItem = {
-    id: uid("item"),
+    id: uid(),
     listId,
     rawText: text,
     quantity: Math.max(1, input.quantity ?? 1),
@@ -163,7 +163,7 @@ export function addMatchedItem(
   quantity = 1,
 ): AppState {
   const item: ShoppingListItem = {
-    id: uid("item"),
+    id: uid(),
     listId,
     rawText: product.name,
     quantity: Math.max(1, quantity),
@@ -287,7 +287,7 @@ export function inviteMember(
       members: [
         ...l.members,
         {
-          id: uid("member"),
+          id: uid(),
           listId,
           email: clean,
           displayName: displayNameFromEmail(clean),
@@ -317,7 +317,7 @@ export function saveProduct(state: AppState, product: Product): AppState {
   return {
     ...state,
     savedProducts: [
-      { id: uid("saved"), userId: state.sessionUserId!, product, savedAt: now() },
+      { id: uid(), userId: state.sessionUserId!, product, savedAt: now() },
       ...state.savedProducts,
     ],
   };
@@ -330,7 +330,7 @@ export function recordPurchase(
   return {
     ...state,
     purchaseHistory: [
-      { ...entry, id: uid("hist"), userId: state.sessionUserId!, purchasedAt: now() },
+      { ...entry, id: uid(), userId: state.sessionUserId!, purchasedAt: now() },
       ...state.purchaseHistory,
     ],
   };

@@ -1,9 +1,15 @@
-export function uid(prefix = "id"): string {
-  const rand =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2) + Date.now().toString(36);
-  return `${prefix}_${rand}`;
+// Every uid() call site feeds a Postgres `uuid` primary key (shopping_lists,
+// shopping_list_members, shopping_list_items, saved_products,
+// purchase_history — see supabase/migrations/0001_init.sql), so this must
+// always return a valid UUID string, not a prefixed label — Postgres
+// rejects anything else with "invalid input syntax for type uuid".
+export function uid(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  // Fallback for runtimes without crypto.randomUUID: still valid v4 format.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
 }
 
 export function now(): string {

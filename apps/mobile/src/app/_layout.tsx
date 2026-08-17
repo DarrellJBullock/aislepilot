@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../lib/query-client";
 import { AppProvider } from "../store/provider";
+import { PreferredStoreProvider } from "../lib/use-preferred-store";
 
 export default function RootLayout() {
   return (
@@ -13,11 +14,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <AppProvider>
-            <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#f7f8fa" } }}>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="shopping/[listId]" options={{ presentation: "fullScreenModal" }} />
-            </Stack>
+            <PreferredStoreProvider>
+              <StatusBar style="dark" />
+              <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#f7f8fa" } }}>
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="shopping/[listId]" options={{ presentation: "fullScreenModal" }} />
+              </Stack>
+            </PreferredStoreProvider>
           </AppProvider>
         </QueryClientProvider>
       </SafeAreaProvider>

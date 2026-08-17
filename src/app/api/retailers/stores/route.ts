@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRetailerProvider, isLiveRetailer } from "@/services/retailers/factory";
+import { cacheStores } from "@/lib/retailer-cache";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,6 +9,7 @@ export async function GET(request: Request) {
   const provider = getRetailerProvider();
   try {
     const stores = await provider.searchStores({ query, zip });
+    await cacheStores(stores);
     return NextResponse.json({ stores, live: isLiveRetailer() });
   } catch {
     return NextResponse.json(

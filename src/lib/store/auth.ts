@@ -22,7 +22,7 @@ export function signUp(
   const existing = Object.values(state.profiles).find((p) => p.email === clean);
   if (existing) return { state, error: "An account with this email already exists." };
 
-  const id = uid("user");
+  const id = uid();
   const profile: Profile & { password: string } = {
     id,
     email: clean,

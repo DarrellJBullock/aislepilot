@@ -196,27 +196,35 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
       createList: (input) => {
         const { next } = apply((s) => S.createList(s, input).state);
         const created = next.lists[0];
-        run(
-          db.from("shopping_lists").insert({
-            id: created.id,
-            owner_id: uid,
-            name: created.name,
-            notes: created.notes ?? null,
-            budget: created.budget ?? null,
-            store_id: created.storeId ?? null,
-            archived: created.archived,
-          }),
-        );
         const owner = created.members[0];
+        // The owner-member insert's RLS policy requires the shopping_lists
+        // row to already exist with owner_id = auth.uid(), so it must be
+        // chained after the list insert resolves, not fired concurrently —
+        // otherwise it can race ahead of the list row being committed and
+        // get rejected with "new row violates row-level security policy".
         run(
-          db.from("shopping_list_members").insert({
-            id: owner.id,
-            list_id: created.id,
-            user_id: uid,
-            email: owner.email,
-            display_name: owner.displayName,
-            role: "owner",
-          }),
+          db
+            .from("shopping_lists")
+            .insert({
+              id: created.id,
+              owner_id: uid,
+              name: created.name,
+              notes: created.notes ?? null,
+              budget: created.budget ?? null,
+              store_id: created.storeId ?? null,
+              archived: created.archived,
+            })
+            .then((listResult) => {
+              if (listResult.error) return listResult;
+              return db.from("shopping_list_members").insert({
+                id: owner.id,
+                list_id: created.id,
+                user_id: uid,
+                email: owner.email,
+                display_name: owner.displayName,
+                role: "owner",
+              });
+            }),
         );
         return created.id;
       },
@@ -237,34 +245,42 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
       duplicateList: (id) => {
         const { next } = apply((s) => S.duplicateList(s, id).state);
         const copy = next.lists[0];
+        // Same ordering requirement as createList: members/items policies
+        // require the list row (and, for items, a member row) to already
+        // exist, so each insert must be chained after the previous commits.
         run(
-          db.from("shopping_lists").insert({
-            id: copy.id,
-            owner_id: uid,
-            name: copy.name,
-            notes: copy.notes ?? null,
-            budget: copy.budget ?? null,
-            store_id: copy.storeId ?? null,
-            archived: copy.archived,
-          }),
+          db
+            .from("shopping_lists")
+            .insert({
+              id: copy.id,
+              owner_id: uid,
+              name: copy.name,
+              notes: copy.notes ?? null,
+              budget: copy.budget ?? null,
+              store_id: copy.storeId ?? null,
+              archived: copy.archived,
+            })
+            .then(async (listResult) => {
+              if (listResult.error) return listResult;
+              if (copy.members.length) {
+                const membersResult = await db.from("shopping_list_members").insert(
+                  copy.members.map((m) => ({
+                    id: m.id,
+                    list_id: copy.id,
+                    user_id: m.role === "owner" ? uid : null,
+                    email: m.email,
+                    display_name: m.displayName,
+                    role: m.role,
+                  })),
+                );
+                if (membersResult.error) return membersResult;
+              }
+              if (copy.items.length) {
+                return db.from("shopping_list_items").insert(copy.items.map(itemToRow));
+              }
+              return { error: null };
+            }),
         );
-        if (copy.members.length) {
-          run(
-            db.from("shopping_list_members").insert(
-              copy.members.map((m) => ({
-                id: m.id,
-                list_id: copy.id,
-                user_id: m.role === "owner" ? uid : null,
-                email: m.email,
-                display_name: m.displayName,
-                role: m.role,
-              })),
-            ),
-          );
-        }
-        if (copy.items.length) {
-          run(db.from("shopping_list_items").insert(copy.items.map(itemToRow)));
-        }
         return copy.id;
       },
       getList: (id) => stateRef.current.lists.find((l) => l.id === id),
