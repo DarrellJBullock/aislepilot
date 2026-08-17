@@ -53,22 +53,25 @@ export function ItemEntry({ listId }: { listId: string }) {
 
       {mode === "single" ? (
         <View className="flex-row gap-2">
-          <Input
-            value={text}
-            onChangeText={setText}
-            onSubmitEditing={addSingle}
-            returnKeyType="done"
-            placeholder="Add an item, e.g. Milk"
-            accessibilityLabel="Item name"
-            className="flex-1"
-          />
-          <Input
-            value={qty}
-            onChangeText={setQty}
-            keyboardType="number-pad"
-            className="w-14 text-center"
-            accessibilityLabel="Quantity"
-          />
+          <View className="flex-1">
+            <Input
+              value={text}
+              onChangeText={setText}
+              onSubmitEditing={addSingle}
+              returnKeyType="done"
+              placeholder="Add an item, e.g. Milk"
+              accessibilityLabel="Item name"
+            />
+          </View>
+          <View className="w-14">
+            <Input
+              value={qty}
+              onChangeText={setQty}
+              keyboardType="number-pad"
+              className="text-center"
+              accessibilityLabel="Quantity"
+            />
+          </View>
           <Button onPress={addSingle} accessibilityLabel="Add item">
             <Plus size={18} color="#fff" />
           </Button>
