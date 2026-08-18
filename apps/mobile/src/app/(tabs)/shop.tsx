@@ -1,4 +1,7 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text } from "react-native";
+// See src/app/shopping/[listId].tsx for why ScrollView comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StorePicker } from "../../components/stores/StorePicker";
 import { usePreferredStore } from "../../lib/use-preferred-store";

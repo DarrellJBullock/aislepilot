@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text } from "react-native";
+// See src/app/shopping/[listId].tsx for why ScrollView comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import type { Store } from "@aislepilot/domain/types";
 import { useApp } from "../../../store/context";

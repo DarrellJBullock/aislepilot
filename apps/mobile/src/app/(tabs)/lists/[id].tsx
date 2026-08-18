@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { View, Text, ScrollView, Pressable, Alert } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
+// See src/app/shopping/[listId].tsx for why ScrollView comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { ScrollView } from "react-native-gesture-handler";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, MoreVertical, ShoppingCart } from "lucide-react-native";
 import { findStore } from "@aislepilot/domain/mock/stores";

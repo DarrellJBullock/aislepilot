@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
+// GestureHandlerRootView (root layout) owns touch dispatch app-wide, so a
+// plain react-native ScrollView isn't in its recognizer graph and its pan
+// gesture is never delivered — swipes land as no-ops. Use gesture-handler's
+// own ScrollView, the documented drop-in replacement, everywhere instead.
+import { ScrollView } from "react-native-gesture-handler";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";

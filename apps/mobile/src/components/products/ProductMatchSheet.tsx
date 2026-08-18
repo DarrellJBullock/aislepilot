@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text } from "react-native";
+// See src/app/shopping/[listId].tsx for why ScrollView comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { ScrollView } from "react-native-gesture-handler";
 import { Search } from "lucide-react-native";
 import type { Product } from "@aislepilot/domain/types";
 import { searchProducts } from "../../lib/retailer";
