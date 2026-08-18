@@ -1,0 +1,75 @@
+// Registers this device for Expo push notifications and keeps the token
+// upserted to device_push_tokens (see supabase/migrations/0003_push_tokens.sql)
+// so /api/notifications/notify can reach other members of a shared list.
+// No-ops safely wherever a piece is missing (no EAS project id yet, denied
+// permission, simulator, Supabase not configured) so the app never crashes
+// or blocks on this — push is a bonus, not a requirement.
+import { useEffect } from "react";
+import { Platform } from "react-native";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { getSupabase } from "./supabase";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function registerForPushToken(): Promise<string | null> {
+  if (!Device.isDevice) return null; // push tokens aren't meaningful on a simulator
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.DEFAULT,
+    });
+  }
+
+  const existing = await Notifications.getPermissionsAsync();
+  let status = existing.status;
+  if (status !== "granted") {
+    const requested = await Notifications.requestPermissionsAsync();
+    status = requested.status;
+  }
+  if (status !== "granted") return null;
+
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+  if (!projectId) return null; // app isn't linked to an EAS project yet
+
+  try {
+    const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
+    return token;
+  } catch (err) {
+    console.warn("[push] failed to get push token:", err);
+    return null;
+  }
+}
+
+export function usePushNotificationRegistration(userId: string | null | undefined) {
+  useEffect(() => {
+    if (!userId) return;
+    const db = getSupabase();
+    if (!db) return;
+
+    let cancelled = false;
+    registerForPushToken().then((token) => {
+      if (cancelled || !token) return;
+      db.from("device_push_tokens")
+        .upsert(
+          { user_id: userId, token, platform: Platform.OS === "ios" ? "ios" : "android" },
+          { onConflict: "user_id,token" },
+        )
+        .then(({ error }) => {
+          if (error) console.warn("[push] failed to save token:", error);
+        });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+}

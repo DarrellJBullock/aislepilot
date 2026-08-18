@@ -1,0 +1,25 @@
+// Mounted inside AppProvider (needs useApp) and expo-router's navigation
+// tree (needs useRouter). Registers this device's push token once signed
+// in, and opens the relevant list when a notification is tapped.
+import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import { useRouter } from "expo-router";
+import { useApp } from "../../store/context";
+import { usePushNotificationRegistration } from "../../lib/push-notifications";
+
+export function PushNotificationsBridge() {
+  const { profile } = useApp();
+  const router = useRouter();
+
+  usePushNotificationRegistration(profile?.id ?? null);
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+      const listId = response.notification.request.content.data?.listId;
+      if (typeof listId === "string") router.push(`/(tabs)/lists/${listId}`);
+    });
+    return () => sub.remove();
+  }, [router]);
+
+  return null;
+}

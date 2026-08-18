@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Profile } from "@aislepilot/domain/types";
 import * as S from "@aislepilot/domain/store/state";
 import { createClient } from "@/lib/supabase/client";
+import { notifyListMembers } from "@/lib/notify";
 import { AppContext, type AppContextValue } from "./context";
 import { rowToList, itemToRow, memberToRow, type ListRow } from "@aislepilot/domain/store/supabase-map";
 import { displayNameFromEmail } from "@aislepilot/domain/utils";
@@ -162,6 +163,20 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
     const itemById = (s: S.AppState, listId: string, itemId: string) =>
       s.lists.find((l) => l.id === listId)?.items.find((i) => i.id === itemId);
 
+    // Only worth a push once a list actually has other people on it.
+    const notifyIfShared = (
+      s: S.AppState,
+      listId: string,
+      event: Parameters<typeof notifyListMembers>[0]["event"],
+      title: string,
+      body: string,
+    ) => {
+      if (!uid) return;
+      const list = s.lists.find((l) => l.id === listId);
+      if (!list || list.members.length < 2) return;
+      notifyListMembers({ listId, actorUserId: uid, event, title, body });
+    };
+
     return {
       ready,
       backend: "supabase",
@@ -300,17 +315,47 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
       addItem: (listId, input) => {
         const { prev, next } = apply((s) => S.addItem(s, listId, input));
         const added = newItemsIn(prev, next, listId);
-        if (added.length) run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+        if (added.length) {
+          run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+          const list = next.lists.find((l) => l.id === listId);
+          notifyIfShared(
+            next,
+            listId,
+            "items_added",
+            list?.name ?? "Shopping list",
+            `${collectorName ?? "Someone"} added ${added[0].rawText}${added.length > 1 ? ` and ${added.length - 1} more` : ""}`,
+          );
+        }
       },
       addItemsBulk: (listId, text) => {
         const { prev, next } = apply((s) => S.addItemsBulk(s, listId, text));
         const added = newItemsIn(prev, next, listId);
-        if (added.length) run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+        if (added.length) {
+          run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+          const list = next.lists.find((l) => l.id === listId);
+          notifyIfShared(
+            next,
+            listId,
+            "items_added",
+            list?.name ?? "Shopping list",
+            `${collectorName ?? "Someone"} added ${added.length} item${added.length === 1 ? "" : "s"}`,
+          );
+        }
       },
       addMatchedItem: (listId, product, quantity) => {
         const { prev, next } = apply((s) => S.addMatchedItem(s, listId, product, quantity));
         const added = newItemsIn(prev, next, listId);
-        if (added.length) run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+        if (added.length) {
+          run(db.from("shopping_list_items").insert(added.map(itemToRow)));
+          const list = next.lists.find((l) => l.id === listId);
+          notifyIfShared(
+            next,
+            listId,
+            "items_added",
+            list?.name ?? "Shopping list",
+            `${collectorName ?? "Someone"} added ${product.name}`,
+          );
+        }
       },
       updateItem: (listId, itemId, patch) => {
         const { next } = apply((s) => S.updateItem(s, listId, itemId, patch));
@@ -336,7 +381,19 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
           S.setItemStatus(s, listId, itemId, status, collectedBy ?? collectorName),
         );
         const item = itemById(next, listId, itemId);
-        if (item) run(db.from("shopping_list_items").update(itemToRow(item)).eq("id", itemId));
+        if (item) {
+          run(db.from("shopping_list_items").update(itemToRow(item)).eq("id", itemId));
+          if (status === "collected") {
+            const list = next.lists.find((l) => l.id === listId);
+            notifyIfShared(
+              next,
+              listId,
+              "item_collected",
+              list?.name ?? "Shopping list",
+              `${collectorName ?? "Someone"} collected ${item.rawText}`,
+            );
+          }
+        }
       },
       setItemPriority: (listId, itemId, priority) => {
         const { next } = apply((s) => S.updateItem(s, listId, itemId, { priority }));
@@ -362,6 +419,14 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
             db.from("shopping_list_members").insert(
               added.map((m) => ({ ...memberToRow(m), user_id: null })),
             ),
+          );
+          const list = next.lists.find((l) => l.id === listId);
+          notifyIfShared(
+            next,
+            listId,
+            "member_invited",
+            list?.name ?? "Shopping list",
+            `${collectorName ?? "Someone"} invited ${email} to the list`,
           );
         }
       },
