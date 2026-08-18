@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -36,7 +36,7 @@ import { SyncBadge } from "./SyncBadge";
 import { cn } from "@/lib/utils";
 
 export function ShoppingMode({ listId }: { listId: string }) {
-  const { lists, setItemStatus, updateItem, matchItem, restoreItem } = useApp();
+  const { lists, purchaseHistory, setItemStatus, updateItem, matchItem, restoreItem, recordPurchase } = useApp();
   const list = lists.find((l) => l.id === listId);
   const [cursor, setCursor] = useState(0);
   const [showDone, setShowDone] = useState(false);
@@ -51,6 +51,26 @@ export function ShoppingMode({ listId }: { listId: string }) {
   );
   const remaining = ordered.filter((i) => !isResolved(i.status));
   const done = ordered.filter((i) => isResolved(i.status));
+
+  // Record the trip once the whole list resolves — the "AislePilot saves
+  // the shopping trip to history" step, which nothing was previously
+  // calling. Guarded on both a ref (this mount) and existing history (a
+  // later re-entry into an already-completed list) so it only ever fires
+  // once per list.
+  const purchaseRecordedRef = useRef(false);
+  useEffect(() => {
+    if (!list || list.items.length === 0 || !list.storeId) return;
+    if (remaining.length !== 0) return;
+    if (purchaseRecordedRef.current) return;
+    if (purchaseHistory.some((h) => h.listId === list.id)) return;
+    purchaseRecordedRef.current = true;
+    recordPurchase({
+      listId: list.id,
+      storeId: list.storeId,
+      total: computeTotals(list).collectedTotal,
+      itemCount: list.items.filter((i) => i.status === "collected").length,
+    });
+  }, [list, remaining.length, purchaseHistory, recordPurchase]);
 
   if (!list) {
     return (
