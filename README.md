@@ -99,6 +99,26 @@ npm run build && npm run start
 Vercel-compatible: import the repo, add any optional env vars, deploy. Works with
 zero env vars (mock mode).
 
+### Mobile app builds (EAS)
+`apps/mobile` is linked to an EAS project (`apps/mobile/eas.json`) with three
+build profiles:
+- `development` — dev-client build, matches what `expo run:ios`/`expo run:android`
+  produce locally.
+- `preview` — internal distribution (ad-hoc), for sharing a build without going
+  through the App Store.
+- `production` — App Store/Play Store distribution, auto-incrementing build number.
+
+```bash
+cd apps/mobile
+npx eas login                                  # once
+npx eas build --platform ios --profile preview # or production
+npx eas submit --platform ios                  # after a production build
+```
+**iOS builds beyond local Xcode installs (preview, production, and any TestFlight
+or App Store submission) require a paid Apple Developer Program membership** — a
+free personal team can sign local dev builds only. Push notifications have the
+same requirement (see `apps/mobile/src/lib/push-notifications.ts.disabled`).
+
 ## Known limitations
 - **Backend switches on config:** with Supabase env vars set, the app uses real
   Supabase Auth + Postgres (persistence, RLS, realtime list/item updates). Without
@@ -120,7 +140,10 @@ zero env vars (mock mode).
   requires HTTPS or localhost for camera access). Browsers without it — notably
   Safari/Firefox — automatically get the manual UPC-entry fallback.
 - Out of scope by design: payments, checkout/delivery, indoor GPS, live inventory
-  polling, loyalty sync, paid AI, non-Kroger retailers, native apps.
+  polling, loyalty sync, paid AI, non-Kroger retailers.
+- The React Native app (`apps/mobile`) has camera barcode scanning, but not yet
+  push notifications or a full offline sync/reconciliation queue (local
+  persistence + best-effort sync only) — see `## Mobile app builds (EAS)` above.
 
 ## Live Kroger integration steps
 The `KrogerProvider` is already implemented — you only need credentials:
