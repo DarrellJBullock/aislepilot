@@ -2,8 +2,10 @@ import { describe, it, expect } from "vitest";
 import { resolveCityToZip } from "@/lib/geocode";
 
 describe("resolveCityToZip", () => {
-  it("resolves a bare city name", () => {
-    expect(resolveCityToZip("Cincinnati")).toBe("52549");
+  it("resolves a bare city name to its most-populous match", () => {
+    // GeoNames also has a ~1-zip "Cincinnati, IA" that alphabetically
+    // precedes "Cincinnati, OH" (70+ zips) — must resolve to the real one.
+    expect(resolveCityToZip("Cincinnati")).toBe("45275");
   });
 
   it("resolves 'City, ST' to the city+state-specific zip", () => {
