@@ -12,6 +12,7 @@ import { TotalsSummary } from "../../../components/lists/TotalsSummary";
 import { ItemEntry } from "../../../components/lists/ItemEntry";
 import { ItemList } from "../../../components/lists/ItemList";
 import { StorePicker } from "../../../components/stores/StorePicker";
+import { StoreLogo } from "../../../components/stores/StoreLogo";
 import { MembersPanel } from "../../../components/collaboration/MembersPanel";
 
 export default function ListDetail() {
@@ -87,10 +88,17 @@ export default function ListDetail() {
         <View className="min-w-0 flex-1">
           <Text className="text-2xl font-bold text-ink">{list.name}</Text>
           <View className="mt-1 flex-row flex-wrap items-center gap-2">
-            <View className="flex-row items-center gap-1">
-              <MapPin size={13} color="#6b7688" />
-              <Text className="text-sm text-ink-muted">{store ? store.name : "No store selected"}</Text>
-            </View>
+            {store ? (
+              <View className="flex-row items-center gap-1.5">
+                <StoreLogo store={store} size={20} />
+                <Text className="text-sm text-ink-muted">{store.name}</Text>
+              </View>
+            ) : (
+              <View className="flex-row items-center gap-1">
+                <MapPin size={13} color="#6b7688" />
+                <Text className="text-sm text-ink-muted">No store selected</Text>
+              </View>
+            )}
             {store?.demo && <Badge tone="amber">Demo data</Badge>}
           </View>
           {list.notes ? <Text className="mt-1 text-sm text-ink-soft">{list.notes}</Text> : null}

@@ -10,6 +10,7 @@
     "./types": "./src/types.ts",
     "./provider": "./src/provider.ts",
     "./utils": "./src/utils.ts",
+    "./branding": "./src/branding.ts",
     "./matching": "./src/matching/index.ts",
     "./pricing": "./src/pricing/index.ts",
     "./progress": "./src/progress/index.ts",

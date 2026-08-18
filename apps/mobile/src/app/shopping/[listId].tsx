@@ -34,6 +34,7 @@ import { useSyncStatus } from "../../lib/use-sync-status";
 import { Button, Progress, ProductImage, PriceTag, AvailabilityPill, LocationBadge, EmptyState } from "../../components/ui";
 import { ProductMatchSheet } from "../../components/products/ProductMatchSheet";
 import { BarcodeScanner } from "../../components/products/BarcodeScanner";
+import { StoreLogo } from "../../components/stores/StoreLogo";
 import { SyncBadge } from "../../components/shopping-mode/SyncBadge";
 
 // A scanned product only auto-matches an unresolved item when confident —
@@ -148,9 +149,12 @@ export default function ShoppingMode() {
             <Text numberOfLines={1} className="text-sm font-semibold text-ink">
               {list.name}
             </Text>
-            <Text numberOfLines={1} className="text-xs text-ink-muted">
-              {store?.name}
-            </Text>
+            <View className="flex-row items-center gap-1">
+              {store && <StoreLogo store={store} size={16} />}
+              <Text numberOfLines={1} className="text-xs text-ink-muted">
+                {store?.name}
+              </Text>
+            </View>
           </View>
           <View className="flex-row items-center gap-2">
             <Pressable

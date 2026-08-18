@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, Alert } from "react-native";
-import { Search, MapPin, Check, LocateFixed } from "lucide-react-native";
+import { Search, Check, LocateFixed } from "lucide-react-native";
 import * as Location from "expo-location";
 import type { Store } from "@aislepilot/domain/types";
 import { searchStores } from "../../lib/retailer";
 import { Input, Skeleton, Badge } from "../ui";
+import { StoreLogo } from "./StoreLogo";
 import { cn } from "../../lib/cn";
 
 export function StorePicker({
@@ -113,9 +114,7 @@ export function StorePicker({
                   selected ? "border-brand-500 bg-brand-50" : "border-black/10 bg-white",
                 )}
               >
-                <View className="h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100">
-                  <MapPin size={18} color="#0b7344" />
-                </View>
+                <StoreLogo store={store} size={40} />
                 <View className="min-w-0 flex-1">
                   <View className="flex-row items-center gap-2">
                     <Text numberOfLines={1} className="flex-shrink font-semibold text-ink">

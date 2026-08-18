@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, Search, Check } from "lucide-react";
+import { Search, Check } from "lucide-react";
 import type { Store } from "@aislepilot/domain/types";
 import { fetchStores } from "@/lib/retailer-client";
 import { Input, Skeleton, DemoBadge, Badge } from "@/components/ui";
+import { StoreLogo } from "./StoreLogo";
 import { cn } from "@/lib/utils";
 
 export function StorePicker({
@@ -80,9 +81,7 @@ export function StorePicker({
                 )}
                 aria-pressed={selected}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
-                  <MapPin size={18} />
-                </span>
+                <StoreLogo store={store} size={40} />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
                     <span className="truncate font-semibold text-ink">{store.name}</span>

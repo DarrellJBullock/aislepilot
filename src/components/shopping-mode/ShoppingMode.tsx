@@ -32,6 +32,7 @@ import {
   EmptyState,
 } from "@/components/ui";
 import { ProductMatchDrawer } from "@/components/products/ProductMatchDrawer";
+import { StoreLogo } from "@/components/stores/StoreLogo";
 import { SyncBadge } from "./SyncBadge";
 import { cn } from "@/lib/utils";
 
@@ -107,7 +108,9 @@ export function ShoppingMode({ listId }: { listId: string }) {
           </Link>
           <div className="min-w-0 text-center">
             <p className="truncate text-sm font-semibold text-ink">{list.name}</p>
-            <p className="truncate text-xs text-ink-muted">{store?.name}</p>
+            <p className="flex items-center justify-center gap-1 truncate text-xs text-ink-muted">
+              {store && <StoreLogo store={store} size={16} />} {store?.name}
+            </p>
           </div>
           <SyncBadge state={syncState} />
         </div>

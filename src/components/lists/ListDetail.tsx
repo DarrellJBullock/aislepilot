@@ -6,6 +6,7 @@ import { ArrowLeft, Settings2, Users, ShoppingCart, MapPin } from "lucide-react"
 import { useApp } from "@/lib/store/provider";
 import { useStore } from "@/lib/use-store";
 import { Button, Badge, EmptyState } from "@/components/ui";
+import { StoreLogo } from "@/components/stores/StoreLogo";
 import { TotalsSummary } from "./TotalsSummary";
 import { ItemEntry } from "./ItemEntry";
 import { ItemList } from "./ItemList";
@@ -49,9 +50,15 @@ export function ListDetail({ listId }: { listId: string }) {
         <div className="min-w-0">
           <h1 className="text-2xl font-bold text-ink">{list.name}</h1>
           <p className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-ink-muted">
-            <span className="inline-flex items-center gap-1">
-              <MapPin size={13} /> {store ? store.name : "No store selected"}
-            </span>
+            {store ? (
+              <span className="inline-flex items-center gap-1.5">
+                <StoreLogo store={store} size={20} /> {store.name}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1">
+                <MapPin size={13} /> No store selected
+              </span>
+            )}
             {store?.demo && <Badge tone="amber">Demo data</Badge>}
           </p>
           {list.notes && <p className="mt-1 text-sm text-ink-soft">{list.notes}</p>}
