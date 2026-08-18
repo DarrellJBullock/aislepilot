@@ -14,6 +14,7 @@ import type {
   KrogerProduct,
   KrogerTokenResponse,
 } from "@aislepilot/domain/providers/kroger-types";
+import { resolveCityToZip } from "@/lib/geocode";
 import { mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
 
 export interface KrogerConfig {
@@ -97,9 +98,15 @@ export class KrogerProvider implements RetailerProvider {
   // ---- Stores ----
 
   async searchStores(input: StoreSearchInput): Promise<Store[]> {
-    // Live location search is geo-based. Accept an explicit zip, or a 5-digit
-    // token embedded in the free-text query.
-    const zip = input.zip ?? input.query?.match(/\b\d{5}\b/)?.[0];
+    // Live location search is geo-based (filter.zipCode.near) — Kroger has
+    // no free-text city search endpoint. Accept an explicit zip, a 5-digit
+    // token embedded in the free-text query, or resolve a city name (e.g.
+    // "Cincinnati" or "Cincinnati, OH") to a zip via the bundled US
+    // city/zip lookup.
+    const zip =
+      input.zip ??
+      input.query?.match(/\b\d{5}\b/)?.[0] ??
+      (input.query ? resolveCityToZip(input.query) : undefined);
     if (!zip) return [];
     const res = await this.authedGet<KrogerListResponse<KrogerLocation>>("/locations", {
       "filter.zipCode.near": zip,
