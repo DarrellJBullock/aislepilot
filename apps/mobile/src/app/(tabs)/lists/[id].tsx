@@ -5,8 +5,8 @@ import { View, Text, Pressable, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MapPin, MoreVertical, ShoppingCart } from "lucide-react-native";
-import { findStore } from "@aislepilot/domain/mock/stores";
 import { useApp } from "../../../store/context";
+import { useStore } from "../../../lib/use-store";
 import { Button, Badge, EmptyState, Modal, Input, Label } from "../../../components/ui";
 import { TotalsSummary } from "../../../components/lists/TotalsSummary";
 import { ItemEntry } from "../../../components/lists/ItemEntry";
@@ -22,6 +22,7 @@ export default function ListDetail() {
   const [pickingStore, setPickingStore] = useState(false);
 
   const list = lists.find((l) => l.id === id);
+  const store = useStore(list?.storeId);
 
   if (!list) {
     return (
@@ -35,7 +36,6 @@ export default function ListDetail() {
     );
   }
 
-  const store = list.storeId ? findStore(list.storeId) : undefined;
   const matchedCount = list.items.filter((i) => i.product).length;
   const canShop = matchedCount > 0 && !!store;
 

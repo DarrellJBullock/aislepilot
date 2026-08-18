@@ -21,7 +21,7 @@ import {
   MapPin,
   PartyPopper,
 } from "lucide-react-native";
-import { findStore } from "@aislepilot/domain/mock/stores";
+import { useStore } from "../../lib/use-store";
 import { sortItems } from "@aislepilot/domain/routing";
 import { computeProgress } from "@aislepilot/domain/progress";
 import { computeTotals, formatCurrency, itemSubtotal } from "@aislepilot/domain/pricing";
@@ -44,7 +44,7 @@ export default function ShoppingMode() {
   const [showDone, setShowDone] = useState(false);
   const [substitute, setSubstitute] = useState<string | null>(null);
 
-  const store = list?.storeId ? findStore(list.storeId) : undefined;
+  const store = useStore(list?.storeId);
   const syncState = useSyncStatus(list?.updatedAt);
 
   // Restore/persist trip progress locally so a kill mid-trip doesn't lose your place.

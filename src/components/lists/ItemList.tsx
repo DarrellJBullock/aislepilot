@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ArrowUpDown } from "lucide-react";
 import type { ShoppingList, ItemStatus } from "@aislepilot/domain/types";
 import { sortItems, groupByDepartment, type SortMode } from "@aislepilot/domain/routing";
-import { findStore } from "@aislepilot/domain/mock/stores";
+import { useStore } from "@/lib/use-store";
 import { EmptyState } from "@/components/ui";
 import { ItemRow } from "./ItemRow";
 
@@ -26,7 +26,7 @@ const FILTERS: { value: StatusFilter; label: string }[] = [
 export function ItemList({ list }: { list: ShoppingList }) {
   const [sort, setSort] = useState<SortMode>("route");
   const [filter, setFilter] = useState<StatusFilter>("all");
-  const store = list.storeId ? findStore(list.storeId) : undefined;
+  const store = useStore(list.storeId);
 
   const filtered = useMemo(() => {
     if (filter === "all") return list.items;

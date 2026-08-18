@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, Settings2, Users, ShoppingCart, MapPin } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
-import { findStore } from "@aislepilot/domain/mock/stores";
+import { useStore } from "@/lib/use-store";
 import { Button, Badge, EmptyState } from "@/components/ui";
 import { TotalsSummary } from "./TotalsSummary";
 import { ItemEntry } from "./ItemEntry";
@@ -17,6 +17,7 @@ export function ListDetail({ listId }: { listId: string }) {
   const [settings, setSettings] = useState(false);
   const [members, setMembers] = useState(false);
   const list = lists.find((l) => l.id === listId);
+  const store = useStore(list?.storeId);
 
   if (!list) {
     return (
@@ -32,7 +33,6 @@ export function ListDetail({ listId }: { listId: string }) {
     );
   }
 
-  const store = list.storeId ? findStore(list.storeId) : undefined;
   const matchedCount = list.items.filter((i) => i.product).length;
   const canShop = matchedCount > 0 && !!store;
 

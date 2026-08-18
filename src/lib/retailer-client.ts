@@ -16,6 +16,12 @@ export async function fetchStores(params: { q?: string; zip?: string } = {}): Pr
   return res.json();
 }
 
+export async function fetchStore(storeId: string): Promise<{ store: Store | null; live: boolean }> {
+  const res = await fetch(`/api/retailers/stores/${encodeURIComponent(storeId)}`);
+  if (!res.ok) return { store: null, live: false };
+  return res.json();
+}
+
 export async function fetchProducts(
   query: string,
   storeId?: string,

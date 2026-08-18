@@ -5,13 +5,13 @@ import { MapPin, Users, ShoppingBasket } from "lucide-react";
 import type { ShoppingList } from "@aislepilot/domain/types";
 import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
 import { computeProgress } from "@aislepilot/domain/progress";
-import { findStore } from "@aislepilot/domain/mock/stores";
+import { useStore } from "@/lib/use-store";
 import { Card, Progress, Badge } from "@/components/ui";
 
 export function ListCard({ list }: { list: ShoppingList }) {
   const totals = computeTotals(list);
   const progress = computeProgress(list);
-  const store = list.storeId ? findStore(list.storeId) : undefined;
+  const store = useStore(list.storeId);
 
   return (
     <Link href={`/lists/${list.id}`} className="block">

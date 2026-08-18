@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import type { ShoppingList, ItemStatus } from "@aislepilot/domain/types";
 import { sortItems, groupByDepartment, type SortMode } from "@aislepilot/domain/routing";
-import { findStore } from "@aislepilot/domain/mock/stores";
 import { EmptyState } from "../ui";
 import { ItemRow } from "./ItemRow";
 import { cn } from "../../lib/cn";
+import { useStore } from "../../lib/use-store";
 
 type StatusFilter = "all" | "unmatched" | ItemStatus;
 
@@ -25,7 +25,7 @@ const FILTERS: { value: StatusFilter; label: string }[] = [
 export function ItemList({ list }: { list: ShoppingList }) {
   const [sort, setSort] = useState<SortMode>("route");
   const [filter, setFilter] = useState<StatusFilter>("all");
-  const store = list.storeId ? findStore(list.storeId) : undefined;
+  const store = useStore(list.storeId);
 
   const filtered = useMemo(
     () => (filter === "all" ? list.items : list.items.filter((i) => i.status === filter)),
