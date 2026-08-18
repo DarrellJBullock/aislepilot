@@ -1,4 +1,7 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text } from "react-native";
+// See src/app/shopping/[listId].tsx for why FlatList comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { FlatList } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Bookmark } from "lucide-react-native";
 import { useApp } from "../../store/context";

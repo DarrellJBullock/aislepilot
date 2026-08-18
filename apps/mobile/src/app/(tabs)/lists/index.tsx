@@ -1,4 +1,7 @@
-import { View, Text, FlatList, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
+// See src/app/shopping/[listId].tsx for why FlatList comes from
+// react-native-gesture-handler, not react-native, in this app.
+import { FlatList } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { Plus, ChevronRight, Archive } from "lucide-react-native";
 import { computeProgress } from "@aislepilot/domain/progress";
