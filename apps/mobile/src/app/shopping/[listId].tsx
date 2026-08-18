@@ -200,6 +200,19 @@ export default function ShoppingMode() {
               description="Every item is collected, skipped, or marked unavailable. Nice work."
               action={<Button onPress={() => router.back()}>Back to list</Button>}
             />
+            {/* Shopping Mode is a full-screen modal — the tab bar (and Saved
+                tab, where purchase history lives) isn't reachable from here
+                without first going back, so confirm the save happened
+                right on this screen instead of leaving the user to go
+                hunting for it. */}
+            <View className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-brand-50 px-4 py-3">
+              <Check size={16} color="#0c9152" />
+              <Text className="text-sm font-medium text-brand-800">
+                Saved to Purchase history — {formatCurrency(totals.collectedTotal)} ·{" "}
+                {done.filter((i) => i.status === "collected").length} item
+                {done.filter((i) => i.status === "collected").length === 1 ? "" : "s"}
+              </Text>
+            </View>
           </View>
         ) : (
           focus && (

@@ -154,6 +154,14 @@ export function ShoppingMode({ listId }: { listId: string }) {
                 </Link>
               }
             />
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-brand-50 px-4 py-3">
+              <Check size={16} className="text-brand-700" />
+              <p className="text-sm font-medium text-brand-800">
+                Saved to Purchase history — {formatCurrency(totals.collectedTotal)} ·{" "}
+                {done.filter((i) => i.status === "collected").length} item
+                {done.filter((i) => i.status === "collected").length === 1 ? "" : "s"}
+              </p>
+            </div>
           </div>
         ) : (
           focus && (
