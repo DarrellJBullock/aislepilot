@@ -74,3 +74,30 @@ export function matchProducts(
     .slice(0, limit)
     .map((r) => r.product);
 }
+
+export interface ScorableItem {
+  id: string;
+  rawText: string;
+}
+
+/**
+ * The best-scoring candidate for a product (e.g. a barcode scan result),
+ * or null if nothing clears minScore. Used where an auto-match needs a
+ * single confident answer rather than matchProducts()'s ranked list —
+ * e.g. deciding whether a scanned product is "the milk on your list" or
+ * an off-list item that should just get added.
+ */
+export function findBestMatchingItem<T extends ScorableItem>(
+  items: T[],
+  product: Product,
+  minScore = 0.5,
+): (T & { score: number }) | null {
+  let best: (T & { score: number }) | null = null;
+  for (const item of items) {
+    const score = scoreProduct(item.rawText, product);
+    if (score >= minScore && (!best || score > best.score)) {
+      best = { ...item, score };
+    }
+  }
+  return best;
+}

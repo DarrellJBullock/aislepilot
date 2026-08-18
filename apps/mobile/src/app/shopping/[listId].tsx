@@ -20,9 +20,12 @@ import {
   Plus,
   MapPin,
   PartyPopper,
+  ScanBarcode,
 } from "lucide-react-native";
+import type { Product } from "@aislepilot/domain/types";
 import { useStore } from "../../lib/use-store";
 import { sortItems } from "@aislepilot/domain/routing";
+import { findBestMatchingItem } from "@aislepilot/domain/matching";
 import { computeProgress } from "@aislepilot/domain/progress";
 import { computeTotals, formatCurrency, itemSubtotal } from "@aislepilot/domain/pricing";
 import { isResolved } from "@aislepilot/domain/status";
@@ -30,7 +33,12 @@ import { useApp } from "../../store/context";
 import { useSyncStatus } from "../../lib/use-sync-status";
 import { Button, Progress, ProductImage, PriceTag, AvailabilityPill, LocationBadge, EmptyState } from "../../components/ui";
 import { ProductMatchSheet } from "../../components/products/ProductMatchSheet";
+import { BarcodeScanner } from "../../components/products/BarcodeScanner";
 import { SyncBadge } from "../../components/shopping-mode/SyncBadge";
+
+// A scanned product only auto-matches an unresolved item when confident —
+// otherwise it's treated as an off-list scan and added as a new item.
+const SCAN_MATCH_THRESHOLD = 0.5;
 
 const cursorKey = (listId: string) => `aislepilot.shoppingCursor.${listId}`;
 
@@ -38,11 +46,12 @@ export default function ShoppingMode() {
   const { listId } = useLocalSearchParams<{ listId: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { lists, setItemStatus, updateItem, matchItem, restoreItem } = useApp();
+  const { lists, setItemStatus, updateItem, matchItem, addMatchedItem, restoreItem } = useApp();
   const list = lists.find((l) => l.id === listId);
   const [cursor, setCursor] = useState(0);
   const [showDone, setShowDone] = useState(false);
   const [substitute, setSubstitute] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
 
   const store = useStore(list?.storeId);
   const syncState = useSyncStatus(list?.updatedAt);
@@ -86,6 +95,26 @@ export default function ShoppingMode() {
     setCursor((c) => Math.max(0, Math.min(c, remaining.length - 2)));
   };
 
+  // Best-scoring not-yet-resolved item for a scanned product, above the
+  // confidence threshold — shared between the scanner's match preview and
+  // the actual "mark collected" action so they never disagree.
+  const findBestScanMatch = (product: Product) =>
+    findBestMatchingItem(
+      list.items.filter((i) => !isResolved(i.status)),
+      product,
+      SCAN_MATCH_THRESHOLD,
+    );
+
+  const handleScanFound = (product: Product) => {
+    const match = findBestScanMatch(product);
+    if (match) {
+      matchItem(list.id, match.id, product);
+      setItemStatus(list.id, match.id, "collected", collectorName);
+    } else {
+      addMatchedItem(list.id, product, 1);
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#f7f8fa]" style={{ paddingTop: insets.top }}>
       <View className="border-b border-black/5 bg-white/95 px-4 py-3">
@@ -102,7 +131,16 @@ export default function ShoppingMode() {
               {store?.name}
             </Text>
           </View>
-          <SyncBadge state={syncState} />
+          <View className="flex-row items-center gap-2">
+            <Pressable
+              onPress={() => setScanning(true)}
+              accessibilityLabel="Scan a barcode"
+              className="h-8 w-8 items-center justify-center rounded-full bg-black/5"
+            >
+              <ScanBarcode size={16} color="#111826" />
+            </Pressable>
+            <SyncBadge state={syncState} />
+          </View>
         </View>
         <View className="mt-2">
           <View className="flex-row items-center justify-between">
@@ -299,6 +337,14 @@ export default function ShoppingMode() {
           if (substitute) matchItem(list.id, substitute, product);
           setSubstitute(null);
         }}
+      />
+
+      <BarcodeScanner
+        open={scanning}
+        onClose={() => setScanning(false)}
+        storeId={list.storeId}
+        findMatch={(product) => findBestScanMatch(product)?.rawText}
+        onFound={handleScanFound}
       />
     </View>
   );

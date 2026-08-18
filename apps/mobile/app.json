@@ -25,6 +25,12 @@
       "expo-router",
       "expo-secure-store",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "AislePilot uses the camera to scan product barcodes while shopping."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#f7f8fa",

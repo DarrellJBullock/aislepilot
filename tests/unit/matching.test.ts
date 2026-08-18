@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalize, tokenize, scoreProduct, matchProducts } from "@aislepilot/domain/matching";
+import { normalize, tokenize, scoreProduct, matchProducts, findBestMatchingItem } from "@aislepilot/domain/matching";
 import { catalogForStore } from "@aislepilot/domain/mock/stores";
 import { makeProduct } from "../factories";
 
@@ -51,5 +51,36 @@ describe("matchProducts against mock catalog", () => {
 
   it("respects the limit", () => {
     expect(matchProducts("milk", catalog, { limit: 2 }).length).toBeLessThanOrEqual(2);
+  });
+});
+
+describe("findBestMatchingItem", () => {
+  const items = [
+    { id: "i1", rawText: "milk" },
+    { id: "i2", rawText: "bread" },
+    { id: "i3", rawText: "eggs" },
+  ];
+
+  it("picks the item whose rawText best matches the product", () => {
+    const milk = makeProduct({ name: "Whole Milk", category: "Milk" });
+    const best = findBestMatchingItem(items, milk);
+    expect(best?.id).toBe("i1");
+  });
+
+  it("returns null when nothing clears the threshold", () => {
+    const unrelated = makeProduct({ name: "Motor Oil", category: "Automotive", department: "Auto" });
+    expect(findBestMatchingItem(items, unrelated)).toBeNull();
+  });
+
+  it("respects a custom minScore", () => {
+    const milk = makeProduct({ name: "Whole Milk", category: "Milk" });
+    expect(findBestMatchingItem(items, milk, 999)).toBeNull();
+  });
+
+  it("preserves the original item's fields alongside the score", () => {
+    const milk = makeProduct({ name: "Whole Milk", category: "Milk" });
+    const best = findBestMatchingItem(items, milk);
+    expect(best).toMatchObject({ id: "i1", rawText: "milk" });
+    expect(best?.score).toBeGreaterThan(0);
   });
 });
