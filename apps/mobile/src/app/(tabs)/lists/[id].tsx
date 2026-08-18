@@ -4,7 +4,7 @@ import { View, Text, Pressable, Alert } from "react-native";
 // react-native-gesture-handler, not react-native, in this app.
 import { ScrollView } from "react-native-gesture-handler";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MapPin, MoreVertical, ShoppingCart } from "lucide-react-native";
+import { MapPin, MoreVertical, ShoppingCart, Users } from "lucide-react-native";
 import { useApp } from "../../../store/context";
 import { useStore } from "../../../lib/use-store";
 import { Button, Badge, EmptyState, Modal, Input, Label } from "../../../components/ui";
@@ -12,6 +12,7 @@ import { TotalsSummary } from "../../../components/lists/TotalsSummary";
 import { ItemEntry } from "../../../components/lists/ItemEntry";
 import { ItemList } from "../../../components/lists/ItemList";
 import { StorePicker } from "../../../components/stores/StorePicker";
+import { MembersPanel } from "../../../components/collaboration/MembersPanel";
 
 export default function ListDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +21,7 @@ export default function ListDetail() {
   const [renaming, setRenaming] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
   const [pickingStore, setPickingStore] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const list = lists.find((l) => l.id === id);
   const store = useStore(list?.storeId);
@@ -93,9 +95,18 @@ export default function ListDetail() {
           </View>
           {list.notes ? <Text className="mt-1 text-sm text-ink-soft">{list.notes}</Text> : null}
         </View>
-        <Pressable onPress={openMenu} accessibilityLabel="List options" className="h-9 w-9 items-center justify-center rounded-full bg-black/5">
-          <MoreVertical size={18} color="#111826" />
-        </Pressable>
+        <View className="flex-row items-center gap-2">
+          <Pressable
+            onPress={() => setSharing(true)}
+            accessibilityLabel="Share this list"
+            className="h-9 w-9 items-center justify-center rounded-full bg-black/5"
+          >
+            <Users size={18} color="#111826" />
+          </Pressable>
+          <Pressable onPress={openMenu} accessibilityLabel="List options" className="h-9 w-9 items-center justify-center rounded-full bg-black/5">
+            <MoreVertical size={18} color="#111826" />
+          </Pressable>
+        </View>
       </View>
 
       <TotalsSummary list={list} />
@@ -149,6 +160,8 @@ export default function ListDetail() {
           Save
         </Button>
       </Modal>
+
+      <MembersPanel list={list} open={sharing} onClose={() => setSharing(false)} />
     </ScrollView>
   );
 }
