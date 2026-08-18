@@ -1,5 +1,37 @@
 import type { Product, ShoppingList, ShoppingListItem } from "../types";
 
+// Approximate grocery sales tax rate by state (2-letter USPS code), for
+// trip-total estimation only — not tax advice. Most US states exempt
+// groceries from sales tax entirely (rate 0, and therefore omitted below).
+// Two groups are listed:
+//   - States that tax groceries at a reduced or full state rate.
+//   - States that exempt groceries at the *state* level but where local
+//     option taxes commonly still apply (GA, NC, VA) — these use a single
+//     representative average rate since actual rates vary by locality.
+//     A few similarly variable states (AZ, CO, LA) were left out entirely
+//     rather than guess at an average that'd be wrong more often than right.
+const GROCERY_TAX_RATE: Record<string, number> = {
+  AL: 0.03,
+  AR: 0.00125,
+  GA: 0.03,
+  HI: 0.04,
+  ID: 0.06,
+  IL: 0.01,
+  MO: 0.01225,
+  MS: 0.07,
+  NC: 0.02,
+  SD: 0.042,
+  TN: 0.04,
+  UT: 0.03,
+  VA: 0.01,
+};
+
+/** 0 for states that exempt groceries from sales tax (most of them). */
+export function getGroceryTaxRate(state?: string): number {
+  if (!state) return 0;
+  return GROCERY_TAX_RATE[state.trim().toUpperCase()] ?? 0;
+}
+
 /** Effective unit price: promo wins, then current, then regular. */
 export function effectiveUnitPrice(product?: Product): number {
   if (!product) return 0;
@@ -33,9 +65,15 @@ export interface ListTotals {
   budget?: number;
   budgetRemaining?: number; // budget - estimated
   overBudget: number; // max(0, estimated - budget)
+  taxRate: number; // 0 when the store's state exempts groceries
+  estimatedTax: number;
+  collectedTax: number;
+  estimatedTotalWithTax: number;
+  collectedTotalWithTax: number;
 }
 
-export function computeTotals(list: ShoppingList): ListTotals {
+/** taxRate is the store's grocery tax rate — see getGroceryTaxRate(). 0 (the default) omits tax entirely. */
+export function computeTotals(list: ShoppingList, taxRate = 0): ListTotals {
   let estimatedTotal = 0;
   let collectedTotal = 0;
 
@@ -52,12 +90,19 @@ export function computeTotals(list: ShoppingList): ListTotals {
   estimatedTotal = round(estimatedTotal);
   collectedTotal = round(collectedTotal);
   const remainingTotal = round(estimatedTotal - collectedTotal);
+  const estimatedTax = round(estimatedTotal * taxRate);
+  const collectedTax = round(collectedTotal * taxRate);
 
   const totals: ListTotals = {
     estimatedTotal,
     collectedTotal,
     remainingTotal,
     overBudget: 0,
+    taxRate,
+    estimatedTax,
+    collectedTax,
+    estimatedTotalWithTax: round(estimatedTotal + estimatedTax),
+    collectedTotalWithTax: round(collectedTotal + collectedTax),
   };
 
   if (typeof list.budget === "number") {

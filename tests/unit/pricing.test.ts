@@ -5,6 +5,7 @@ import {
   itemSubtotal,
   computeTotals,
   formatCurrency,
+  getGroceryTaxRate,
 } from "@aislepilot/domain/pricing";
 import { makeProduct, makeItem, makeList } from "../factories";
 
@@ -88,5 +89,58 @@ describe("computeTotals", () => {
 describe("formatCurrency", () => {
   it("formats USD", () => {
     expect(formatCurrency(3.5)).toBe("$3.50");
+  });
+});
+
+describe("getGroceryTaxRate", () => {
+  it("is 0 for states that exempt groceries", () => {
+    expect(getGroceryTaxRate("OH")).toBe(0);
+    expect(getGroceryTaxRate("CA")).toBe(0);
+  });
+  it("is 0 for no state", () => {
+    expect(getGroceryTaxRate(undefined)).toBe(0);
+  });
+  it("returns the rate for states that tax groceries", () => {
+    expect(getGroceryTaxRate("TN")).toBe(0.04);
+    expect(getGroceryTaxRate("MS")).toBe(0.07);
+  });
+  it("is case-insensitive", () => {
+    expect(getGroceryTaxRate("tn")).toBe(0.04);
+  });
+  it("returns a representative local rate for states that exempt at the state level but tax locally", () => {
+    expect(getGroceryTaxRate("GA")).toBe(0.03);
+    expect(getGroceryTaxRate("NC")).toBe(0.02);
+    expect(getGroceryTaxRate("VA")).toBe(0.01);
+  });
+  it("is 0 for highly variable local-tax states left out of the table", () => {
+    expect(getGroceryTaxRate("AZ")).toBe(0);
+    expect(getGroceryTaxRate("CO")).toBe(0);
+    expect(getGroceryTaxRate("LA")).toBe(0);
+  });
+});
+
+describe("computeTotals with tax", () => {
+  it("adds no tax by default", () => {
+    const list = makeList([
+      makeItem({ id: "a", status: "available", product: makeProduct({ currentPrice: 10 }) }),
+    ]);
+    const t = computeTotals(list);
+    expect(t.taxRate).toBe(0);
+    expect(t.estimatedTax).toBe(0);
+    expect(t.estimatedTotalWithTax).toBe(10);
+  });
+
+  it("applies the given tax rate to estimated and collected totals", () => {
+    const list = makeList([
+      makeItem({ id: "a", status: "collected", product: makeProduct({ currentPrice: 10 }) }),
+      makeItem({ id: "b", status: "available", product: makeProduct({ currentPrice: 20 }) }),
+    ]);
+    const t = computeTotals(list, 0.07);
+    expect(t.estimatedTotal).toBe(30);
+    expect(t.collectedTotal).toBe(10);
+    expect(t.estimatedTax).toBe(2.1);
+    expect(t.collectedTax).toBe(0.7);
+    expect(t.estimatedTotalWithTax).toBe(32.1);
+    expect(t.collectedTotalWithTax).toBe(10.7);
   });
 });

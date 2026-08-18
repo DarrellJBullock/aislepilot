@@ -27,7 +27,7 @@ import { useStore } from "../../lib/use-store";
 import { sortItems } from "@aislepilot/domain/routing";
 import { findBestMatchingItem } from "@aislepilot/domain/matching";
 import { computeProgress } from "@aislepilot/domain/progress";
-import { computeTotals, formatCurrency, itemSubtotal } from "@aislepilot/domain/pricing";
+import { computeTotals, formatCurrency, getGroceryTaxRate, itemSubtotal } from "@aislepilot/domain/pricing";
 import { isResolved } from "@aislepilot/domain/status";
 import { useApp } from "../../store/context";
 import { useSyncStatus } from "../../lib/use-sync-status";
@@ -90,10 +90,10 @@ export default function ShoppingMode() {
     recordPurchase({
       listId: list.id,
       storeId: list.storeId,
-      total: computeTotals(list).collectedTotal,
+      total: computeTotals(list, getGroceryTaxRate(store?.state)).collectedTotalWithTax,
       itemCount: list.items.filter((i) => i.status === "collected").length,
     });
-  }, [list, remaining.length, purchaseHistory, recordPurchase]);
+  }, [list, remaining.length, purchaseHistory, recordPurchase, store]);
 
   if (!list) {
     return (
@@ -104,7 +104,7 @@ export default function ShoppingMode() {
   }
 
   const progress = computeProgress(list);
-  const totals = computeTotals(list);
+  const totals = computeTotals(list, getGroceryTaxRate(store?.state));
   const focus = remaining[Math.min(cursor, Math.max(0, remaining.length - 1))];
   const allDone = remaining.length === 0;
   const collectorName = list.members.find((m) => m.role === "owner")?.displayName;
@@ -191,6 +191,16 @@ export default function ShoppingMode() {
             <Text className="font-bold text-ink">{formatCurrency(totals.remainingTotal)}</Text>
           </View>
         </View>
+        {totals.taxRate > 0 && (
+          <View className="mt-2 flex-row items-center justify-between rounded-2xl border border-black/5 bg-white px-3 py-2">
+            <Text className="text-xs text-ink-muted">
+              Tax ({(totals.taxRate * 100).toFixed(2).replace(/\.?0+$/, "")}%)
+            </Text>
+            <Text className="text-xs font-semibold text-ink-soft">
+              +{formatCurrency(totals.collectedTax)} · Total {formatCurrency(totals.collectedTotalWithTax)}
+            </Text>
+          </View>
+        )}
 
         {allDone ? (
           <View className="mt-4">
@@ -208,7 +218,7 @@ export default function ShoppingMode() {
             <View className="mt-4 flex-row items-center justify-center gap-2 rounded-2xl bg-brand-50 px-4 py-3">
               <Check size={16} color="#0c9152" />
               <Text className="text-sm font-medium text-brand-800">
-                Saved to Purchase history — {formatCurrency(totals.collectedTotal)} ·{" "}
+                Saved to Purchase history — {formatCurrency(totals.collectedTotalWithTax)} ·{" "}
                 {done.filter((i) => i.status === "collected").length} item
                 {done.filter((i) => i.status === "collected").length === 1 ? "" : "s"}
               </Text>

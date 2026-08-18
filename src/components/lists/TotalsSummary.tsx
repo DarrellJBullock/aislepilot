@@ -1,13 +1,13 @@
 "use client";
 
 import { AlertTriangle, TrendingDown } from "lucide-react";
-import type { ShoppingList } from "@aislepilot/domain/types";
-import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
+import type { ShoppingList, Store } from "@aislepilot/domain/types";
+import { computeTotals, formatCurrency, getGroceryTaxRate } from "@aislepilot/domain/pricing";
 import { budgetSuggestions } from "@aislepilot/domain/assignment";
 import { Card, Progress } from "@/components/ui";
 
-export function TotalsSummary({ list }: { list: ShoppingList }) {
-  const totals = computeTotals(list);
+export function TotalsSummary({ list, store }: { list: ShoppingList; store?: Store }) {
+  const totals = computeTotals(list, getGroceryTaxRate(store?.state));
   const budgetPct =
     totals.budget && totals.budget > 0
       ? Math.min(100, Math.round((totals.estimatedTotal / totals.budget) * 100))
@@ -23,6 +23,23 @@ export function TotalsSummary({ list }: { list: ShoppingList }) {
           <Stat label="Collected" value={formatCurrency(totals.collectedTotal)} />
           <Stat label="Remaining" value={formatCurrency(totals.remainingTotal)} />
         </div>
+
+        {totals.taxRate > 0 && (
+          <div className="mt-3 flex items-center justify-between border-t border-black/5 pt-3 text-sm">
+            <span className="text-ink-muted">
+              Tax ({(totals.taxRate * 100).toFixed(2).replace(/\.?0+$/, "")}%)
+            </span>
+            <span className="tabular-nums text-ink-soft">+{formatCurrency(totals.estimatedTax)}</span>
+          </div>
+        )}
+        {totals.taxRate > 0 && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-semibold text-ink">Total with tax</span>
+            <span className="font-bold tabular-nums text-ink">
+              {formatCurrency(totals.estimatedTotalWithTax)}
+            </span>
+          </div>
+        )}
 
         {totals.budget != null && (
           <div className="mt-4 border-t border-black/5 pt-4">

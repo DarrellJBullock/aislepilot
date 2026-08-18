@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import { AlertTriangle, TrendingDown } from "lucide-react-native";
-import type { ShoppingList } from "@aislepilot/domain/types";
-import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
+import type { ShoppingList, Store } from "@aislepilot/domain/types";
+import { computeTotals, formatCurrency, getGroceryTaxRate } from "@aislepilot/domain/pricing";
 import { budgetSuggestions } from "@aislepilot/domain/assignment";
 import { Card, CardBody, Progress } from "../ui";
 
-export function TotalsSummary({ list }: { list: ShoppingList }) {
-  const totals = computeTotals(list);
+export function TotalsSummary({ list, store }: { list: ShoppingList; store?: Store }) {
+  const totals = computeTotals(list, getGroceryTaxRate(store?.state));
   const budgetPct =
     totals.budget && totals.budget > 0
       ? Math.min(100, Math.round((totals.estimatedTotal / totals.budget) * 100))
@@ -21,6 +21,23 @@ export function TotalsSummary({ list }: { list: ShoppingList }) {
           <Stat label="Collected" value={formatCurrency(totals.collectedTotal)} />
           <Stat label="Remaining" value={formatCurrency(totals.remainingTotal)} />
         </View>
+
+        {totals.taxRate > 0 && (
+          <View className="mt-3 flex-row items-center justify-between border-t border-black/5 pt-3">
+            <Text className="text-sm text-ink-muted">
+              Tax ({(totals.taxRate * 100).toFixed(2).replace(/\.?0+$/, "")}%)
+            </Text>
+            <Text className="text-sm text-ink-soft">+{formatCurrency(totals.estimatedTax)}</Text>
+          </View>
+        )}
+        {totals.taxRate > 0 && (
+          <View className="flex-row items-center justify-between">
+            <Text className="text-sm font-semibold text-ink">Total with tax</Text>
+            <Text className="text-sm font-bold text-ink">
+              {formatCurrency(totals.estimatedTotalWithTax)}
+            </Text>
+          </View>
+        )}
 
         {totals.budget != null && (
           <View className="mt-4 border-t border-black/5 pt-4">

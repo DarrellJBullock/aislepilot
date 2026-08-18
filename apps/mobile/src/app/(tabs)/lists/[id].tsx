@@ -109,7 +109,7 @@ export default function ListDetail() {
         </View>
       </View>
 
-      <TotalsSummary list={list} />
+      <TotalsSummary list={list} store={store} />
 
       {canShop ? (
         <Button fullWidth size="lg" onPress={() => router.push(`/shopping/${list.id}`)}>

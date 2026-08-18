@@ -66,7 +66,7 @@ export function ListDetail({ listId }: { listId: string }) {
         </div>
       </div>
 
-      <TotalsSummary list={list} />
+      <TotalsSummary list={list} store={store} />
 
       {canShop ? (
         <Link href={`/lists/${list.id}/shopping`}>
