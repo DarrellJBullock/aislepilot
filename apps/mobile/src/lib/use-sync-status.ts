@@ -1,30 +1,14 @@
-import { useEffect, useRef, useState } from "react";
 import { useOnlineStatus } from "./use-online-status";
+import { useSyncQueue } from "./sync-queue";
 
 export type SyncState = "synced" | "syncing" | "offline";
 
-/** Ported from the web app's useSyncStatus — same "syncing" pulse after a
- * change, "offline" whenever connectivity drops. */
-export function useSyncStatus(dep: unknown): SyncState {
+/** Reflects the real durable write queue (see ./sync-queue): "offline"
+ * when there's no network, "syncing" while writes are queued/draining,
+ * "synced" once the queue is empty. */
+export function useSyncStatus(): SyncState {
   const online = useOnlineStatus();
-  const [state, setState] = useState<SyncState>("synced");
-  const first = useRef(true);
-
-  useEffect(() => {
-    if (!online) {
-      setState("offline");
-      return;
-    }
-    if (first.current) {
-      first.current = false;
-      setState("synced");
-      return;
-    }
-    setState("syncing");
-    const t = setTimeout(() => setState("synced"), 600);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dep, online]);
-
-  return online ? state : "offline";
+  const pending = useSyncQueue();
+  if (!online) return "offline";
+  return pending > 0 ? "syncing" : "synced";
 }

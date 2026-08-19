@@ -44,7 +44,7 @@ export function ShoppingMode({ listId }: { listId: string }) {
   const [substitute, setSubstitute] = useState<string | null>(null);
 
   const store = useStore(list?.storeId);
-  const syncState = useSyncStatus(list?.updatedAt);
+  const syncState = useSyncStatus();
 
   const ordered = useMemo(
     () => (list ? sortItems(list.items.filter((i) => i.product), "route", store) : []),

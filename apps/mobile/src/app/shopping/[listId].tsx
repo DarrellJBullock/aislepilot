@@ -56,7 +56,7 @@ export default function ShoppingMode() {
   const [scanning, setScanning] = useState(false);
 
   const store = useStore(list?.storeId);
-  const syncState = useSyncStatus(list?.updatedAt);
+  const syncState = useSyncStatus();
 
   // Restore/persist trip progress locally so a kill mid-trip doesn't lose your place.
   useEffect(() => {

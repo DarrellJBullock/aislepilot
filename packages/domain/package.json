@@ -25,6 +25,7 @@
     "./providers/kroger-types": "./src/providers/kroger-types.ts",
     "./providers/kroger-map": "./src/providers/kroger-map.ts",
     "./store/state": "./src/store/state.ts",
-    "./store/supabase-map": "./src/store/supabase-map.ts"
+    "./store/supabase-map": "./src/store/supabase-map.ts",
+    "./sync/queue": "./src/sync/queue.ts"
   }
 }
