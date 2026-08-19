@@ -5,7 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Plus, PlayCircle, MapPin, ChevronRight } from "lucide-react-native";
-import { computeTotals } from "@aislepilot/domain/pricing";
+import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
 import { computeProgress } from "@aislepilot/domain/progress";
 import { useApp } from "../../store/context";
 import { usePreferredStore } from "../../lib/use-preferred-store";
@@ -73,19 +73,19 @@ export default function Home() {
               <View>
                 <Text className="text-xs text-ink-muted">Estimated</Text>
                 <Text className="font-semibold tabular-nums text-ink">
-                  ${totals.estimatedTotal.toFixed(2)}
+                  {formatCurrency(totals.estimatedTotal)}
                 </Text>
               </View>
               <View>
                 <Text className="text-xs text-ink-muted">Collected</Text>
                 <Text className="font-semibold tabular-nums text-ink">
-                  ${totals.collectedTotal.toFixed(2)}
+                  {formatCurrency(totals.collectedTotal)}
                 </Text>
               </View>
               <View>
                 <Text className="text-xs text-ink-muted">Remaining</Text>
                 <Text className="font-semibold tabular-nums text-ink">
-                  ${totals.remainingTotal.toFixed(2)}
+                  {formatCurrency(totals.remainingTotal)}
                 </Text>
               </View>
             </View>
@@ -103,6 +103,15 @@ export default function Home() {
             </Button>
           </CardBody>
         </Card>
+      ) : lists.length > 0 ? (
+        // There's no active list to feature, but archived ones exist —
+        // "No lists yet" would be wrong here since Recent lists below
+        // isn't actually empty.
+        <View className="mt-4 rounded-2xl bg-brand-50 px-4 py-3">
+          <Text className="text-sm text-brand-800">
+            No active list right now — start a new one, or reopen one below.
+          </Text>
+        </View>
       ) : (
         <View className="mt-4">
           <EmptyState
@@ -120,35 +129,39 @@ export default function Home() {
         </View>
       )}
 
-      <View className="mt-6 flex-row items-center justify-between">
-        <Text className="text-base font-bold text-ink">Recent lists</Text>
-        <Pressable className="flex-row items-center" onPress={() => router.push("/(tabs)/lists")}>
-          <Text className="text-sm font-semibold text-brand-700">See all</Text>
-          <ChevronRight size={16} color="#0b7344" />
-        </Pressable>
-      </View>
-
-      <View className="mt-2 gap-2">
-        {lists.slice(0, 4).map((l) => {
-          const p = computeProgress(l);
-          return (
-            <Pressable key={l.id} onPress={() => router.push(`/(tabs)/lists/${l.id}`)}>
-              <Card className="mt-1">
-                <CardBody className="flex-row items-center justify-between">
-                  <View className="flex-shrink">
-                    <Text className="font-semibold text-ink">{l.name}</Text>
-                    <Text className="text-xs text-ink-muted">
-                      {l.items.length} item{l.items.length === 1 ? "" : "s"}
-                      {p.total > 0 ? ` · ${p.percent}% done` : ""}
-                    </Text>
-                  </View>
-                  <ChevronRight size={18} color="#6b7688" />
-                </CardBody>
-              </Card>
+      {lists.length > 0 && (
+        <>
+          <View className="mt-6 flex-row items-center justify-between">
+            <Text className="text-base font-bold text-ink">Recent lists</Text>
+            <Pressable className="flex-row items-center" onPress={() => router.push("/(tabs)/lists")}>
+              <Text className="text-sm font-semibold text-brand-700">See all</Text>
+              <ChevronRight size={16} color="#0b7344" />
             </Pressable>
-          );
-        })}
-      </View>
+          </View>
+
+          <View className="mt-2 gap-2">
+            {lists.slice(0, 4).map((l) => {
+              const p = computeProgress(l);
+              return (
+                <Pressable key={l.id} onPress={() => router.push(`/(tabs)/lists/${l.id}`)}>
+                  <Card className="mt-1">
+                    <CardBody className="flex-row items-center justify-between">
+                      <View className="flex-shrink">
+                        <Text className="font-semibold text-ink">{l.name}</Text>
+                        <Text className="text-xs text-ink-muted">
+                          {l.items.length} item{l.items.length === 1 ? "" : "s"}
+                          {p.total > 0 ? ` · ${p.percent}% done` : ""}
+                        </Text>
+                      </View>
+                      <ChevronRight size={18} color="#6b7688" />
+                    </CardBody>
+                  </Card>
+                </Pressable>
+              );
+            })}
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }

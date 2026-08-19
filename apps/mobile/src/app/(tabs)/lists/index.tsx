@@ -5,7 +5,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { Plus, ChevronRight, Archive } from "lucide-react-native";
 import { computeProgress } from "@aislepilot/domain/progress";
-import { computeTotals } from "@aislepilot/domain/pricing";
+import { computeTotals, formatCurrency } from "@aislepilot/domain/pricing";
 import { useApp } from "../../../store/context";
 import { Card, CardBody, Button, EmptyState, Progress } from "../../../components/ui";
 
@@ -45,8 +45,8 @@ export default function ListsIndex() {
                   <ChevronRight size={18} color="#6b7688" />
                 </View>
                 <Text className="mt-0.5 text-sm text-ink-muted">
-                  {item.items.length} item{item.items.length === 1 ? "" : "s"} · $
-                  {totals.estimatedTotal.toFixed(2)} estimated
+                  {item.items.length} item{item.items.length === 1 ? "" : "s"} ·{" "}
+                  {formatCurrency(totals.estimatedTotal)} estimated
                 </Text>
                 {progress.total > 0 && (
                   <View className="mt-2.5">
@@ -61,8 +61,12 @@ export default function ListsIndex() {
       ListEmptyComponent={
         <EmptyState
           icon={<Archive size={28} color="#18b365" />}
-          title="No lists yet"
-          description="Create your first shopping list to get priced, aisle-by-aisle shopping."
+          title={archived.length > 0 ? "No active lists" : "No lists yet"}
+          description={
+            archived.length > 0
+              ? "All your lists are archived — see them below, or start a new one."
+              : "Create your first shopping list to get priced, aisle-by-aisle shopping."
+          }
           action={
             <Button onPress={() => router.push("/(tabs)/lists/new")}>
               <Text className="font-semibold text-white">Create a list</Text>
