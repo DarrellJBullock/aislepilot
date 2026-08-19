@@ -35,6 +35,12 @@
         }
       ],
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "AislePilot uses your location to find nearby stores."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#f7f8fa",
