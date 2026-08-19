@@ -72,6 +72,8 @@ export function ItemRow({ item, storeId }: { item: ShoppingListItem; storeId?: s
             <View className="flex-row items-center gap-1 rounded-full border border-black/10 p-0.5">
               <Pressable
                 onPress={() => updateItem(item.listId, item.id, { quantity: item.quantity - 1 })}
+                disabled={item.quantity <= 1}
+                style={{ opacity: item.quantity <= 1 ? 0.3 : 1 }}
                 className="h-7 w-7 items-center justify-center rounded-full"
                 accessibilityLabel="Decrease quantity"
               >

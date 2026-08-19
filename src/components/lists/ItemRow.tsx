@@ -97,7 +97,8 @@ export function ItemRow({
                 onClick={() =>
                   updateItem(item.listId, item.id, { quantity: item.quantity - 1 })
                 }
-                className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-black/5"
+                disabled={item.quantity <= 1}
+                className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-black/5 disabled:opacity-30 disabled:hover:bg-transparent"
                 aria-label="Decrease quantity"
               >
                 <Minus size={14} />
