@@ -141,9 +141,11 @@ same requirement (see `apps/mobile/src/lib/push-notifications.ts.disabled`).
   Safari/Firefox — automatically get the manual UPC-entry fallback.
 - Out of scope by design: payments, checkout/delivery, indoor GPS, live inventory
   polling, loyalty sync, paid AI, non-Kroger retailers.
-- The React Native app (`apps/mobile`) has camera barcode scanning, but not yet
-  push notifications or a full offline sync/reconciliation queue (local
-  persistence + best-effort sync only) — see `## Mobile app builds (EAS)` above.
+- The React Native app (`apps/mobile`) has camera barcode scanning and shared-list
+  push notifications (a development or EAS build is required — Expo Go can't issue
+  push tokens, and simulators never receive pushes), but not yet a full offline
+  sync/reconciliation queue (local persistence + best-effort sync only) — see
+  `## Mobile app builds (EAS)` above.
 
 ## Live Kroger integration steps
 The `KrogerProvider` is already implemented — you only need credentials:
