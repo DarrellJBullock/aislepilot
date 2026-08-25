@@ -173,6 +173,7 @@ erDiagram
   shopping_lists }o--|| stores : "selected store"
   profiles ||--o{ purchase_history : records
   profiles ||--o{ saved_products : saves
+  profiles ||--o{ device_push_tokens : "registers (push targets)"
   products_cache ||--o{ store_product_locations : caches
 ```
 
@@ -181,10 +182,9 @@ RLS scopes every list to its owner plus invited members; a trigger creates a
 
 ## Known gaps
 
-- `/api/notifications/notify` reads `device_push_tokens` and cites
-  `supabase/migrations/0003_push_tokens.sql`, but only `0001_init.sql` and
-  `0002_rls.sql` exist in the repo — push notifications will fail against a fresh
-  schema push.
+- Nothing registers a row in `device_push_tokens` yet — the notify endpoint and
+  its table exist, but the mobile app doesn't request a push token, so shared-list
+  notifications currently deliver to nobody.
 - Mobile has no mock-mode fallback for auth/lists (it shows a "Supabase not
   configured" screen), while retailer data still works fully offline.
 - Tests: 18 Vitest files (unit + integration) plus two Playwright e2e specs.

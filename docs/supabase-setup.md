@@ -17,14 +17,16 @@ Using the Supabase CLI:
 supabase link --project-ref <your-ref>
 supabase db push          # applies supabase/migrations/*.sql
 ```
-Or paste `supabase/migrations/0001_init.sql` then `0002_rls.sql` into the SQL
-editor and run them in order.
+Or paste `supabase/migrations/0001_init.sql`, `0002_rls.sql`, then
+`0003_push_tokens.sql` into the SQL editor and run them in order (or run
+`supabase/schema.sql`, which combines all three).
 
 **What they create**
 - Tables: `profiles`, `retailers`, `stores`, `store_departments`,
   `shopping_lists`, `shopping_list_members`, `shopping_list_items`,
   `products_cache`, `store_product_locations`, `purchase_history`,
-  `saved_products` — all UUID PKs with `created_at` / `updated_at`, FKs, indexes.
+  `saved_products`, `device_push_tokens` — all UUID PKs with `created_at` /
+  `updated_at`, FKs, indexes.
 - Row Level Security on every user table: a list is visible only to its owner and
   invited members (`is_list_member()`); history and saved products are owner-only;
   reference data is read-only to authenticated users.
