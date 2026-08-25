@@ -182,9 +182,9 @@ RLS scopes every list to its owner plus invited members; a trigger creates a
 
 ## Known gaps
 
-- Nothing registers a row in `device_push_tokens` yet — the notify endpoint and
-  its table exist, but the mobile app doesn't request a push token, so shared-list
-  notifications currently deliver to nobody.
+- Push notifications only reach real devices running a development/EAS build:
+  `registerPushToken` (`apps/mobile/src/lib/push.ts`) no-ops on simulators and in
+  Expo Go, which can't issue Expo push tokens.
 - Mobile has no mock-mode fallback for auth/lists (it shows a "Supabase not
   configured" screen), while retailer data still works fully offline.
 - Tests: 18 Vitest files (unit + integration) plus two Playwright e2e specs.

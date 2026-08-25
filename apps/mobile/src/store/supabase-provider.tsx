@@ -15,6 +15,7 @@ import { getSupabase } from "../lib/supabase";
 import { enqueueOps, flushQueue } from "../lib/sync-queue";
 import { useOnlineStatus } from "../lib/use-online-status";
 import { notifyListMembers } from "../lib/notify";
+import { registerPushToken, unregisterPushToken } from "../lib/push";
 import { AppContext, type AppContextValue } from "./context";
 
 const SELECT = "*, shopping_list_items(*), shopping_list_members(*)";
@@ -76,6 +77,7 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
         return next;
       });
       await loadLists(db);
+      void registerPushToken(db, userId);
     },
     [loadLists],
   );
@@ -210,7 +212,9 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
         return null;
       },
       signOut: () => {
-        db.auth.signOut();
+        void unregisterPushToken(db).finally(() => {
+          db.auth.signOut();
+        });
       },
       updateProfile: (patch) => {
         if (!uid) return;
