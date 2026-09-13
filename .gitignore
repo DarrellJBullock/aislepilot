@@ -13,3 +13,8 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 .vercel
 .env*
+
+.agents/
+.claude/skills/
+.serena/
+supabase/.temp/
