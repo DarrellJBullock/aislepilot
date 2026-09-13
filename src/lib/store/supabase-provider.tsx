@@ -221,6 +221,18 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
         if (data.user) await setSession(db, data.user.id, data.user.email ?? email);
         return null;
       },
+      resetPassword: async (email) => {
+        const { error } = await db.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/update-password`,
+        });
+        if (error) return error.message;
+        return null;
+      },
+      updatePassword: async (newPassword) => {
+        const { error } = await db.auth.updateUser({ password: newPassword });
+        if (error) return error.message;
+        return null;
+      },
       signOut: () => {
         db.auth.signOut();
       },

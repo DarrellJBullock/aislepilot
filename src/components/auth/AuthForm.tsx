@@ -81,7 +81,17 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
               <FieldError>{errors.email?.message}</FieldError>
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                {!isSignUp && (
+                  <Link
+                    href="/forgot-password"
+                    className="mb-1.5 text-sm font-semibold text-brand-700 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                )}
+              </div>
               <Input
                 id="password"
                 type="password"

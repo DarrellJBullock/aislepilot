@@ -76,6 +76,16 @@ export function LocalAppProvider({ children }: { children: ReactNode }) {
         });
         return err;
       },
+      resetPassword: (email, newPassword) => {
+        let err: string | null = null;
+        setState((s) => {
+          const res = Auth.resetPassword(s, email, newPassword ?? "");
+          err = res.error ?? null;
+          return res.state;
+        });
+        return err;
+      },
+      updatePassword: () => "Not available in local demo mode.",
       signOut: () => setState((s) => Auth.signOut(s)),
       updateProfile: (patch) => setState((s) => Auth.updateProfile(s, patch)),
 

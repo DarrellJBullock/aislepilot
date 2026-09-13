@@ -33,6 +33,16 @@ export interface AppContextValue {
     email: string,
     password: string,
   ) => string | null | Promise<string | null>;
+  // Local: resets the account's password directly (newPassword required).
+  // Supabase: emails a recovery link (newPassword is ignored).
+  // Resolves to an error string, or null on success.
+  resetPassword: (
+    email: string,
+    newPassword?: string,
+  ) => string | null | Promise<string | null>;
+  // Supabase only — sets a new password for the session established by the
+  // recovery link. Resolves to an error string, or null on success.
+  updatePassword: (newPassword: string) => string | null | Promise<string | null>;
   signOut: () => void;
   updateProfile: (patch: Partial<Pick<Profile, "displayName">>) => void;
   // lists

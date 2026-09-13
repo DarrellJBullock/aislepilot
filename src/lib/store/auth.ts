@@ -51,6 +51,27 @@ export function signIn(
   return { state: { ...state, sessionUserId: profile.id } };
 }
 
+export function resetPassword(
+  state: AppState,
+  email: string,
+  newPassword: string,
+): AuthResult {
+  const clean = email.trim().toLowerCase();
+  const profile = Object.values(state.profiles).find((p) => p.email === clean);
+  if (!profile) return { state, error: "No account found with that email." };
+  if (newPassword.length < 6)
+    return { state, error: "Password must be at least 6 characters." };
+  return {
+    state: {
+      ...state,
+      profiles: {
+        ...state.profiles,
+        [profile.id]: { ...profile, password: newPassword },
+      },
+    },
+  };
+}
+
 export function signOut(state: AppState): AppState {
   return { ...state, sessionUserId: null };
 }
