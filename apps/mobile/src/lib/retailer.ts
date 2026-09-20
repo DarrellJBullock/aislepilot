@@ -8,16 +8,23 @@
 // fully usable with zero credentials and zero network, per spec.
 import type { Product, Store, StoreSearchInput } from "@aislepilot/domain/types";
 import { MockKrogerProvider } from "@aislepilot/domain/providers/mock-kroger";
+import { getSupabase } from "./supabase";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
 const FETCH_TIMEOUT_MS = 6000;
 const mock = new MockKrogerProvider();
 
+// The retailer routes require a signed-in user. The web app proves this via
+// its session cookie, but React Native has no cookie jar, so we attach the
+// current Supabase access token as a Bearer header instead — see
+// requireUser() in src/lib/api-auth.ts on the API side.
 async function timedFetch(url: string): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
-    return await fetch(url, { signal: controller.signal });
+    const session = (await getSupabase()?.auth.getSession())?.data.session;
+    const headers = session ? { Authorization: `Bearer ${session.access_token}` } : undefined;
+    return await fetch(url, { signal: controller.signal, headers });
   } finally {
     clearTimeout(timer);
   }
