@@ -37,6 +37,14 @@ const BANNER_DOMAIN: Record<string, string> = {
   "HARRIS TEETER": "harristeeter.com",
   FOOD4LESS: "food4less.com",
   "FOOD 4 LESS": "food4less.com",
+  FOODSCO: "foodsco.net",
+  "FOODS CO": "foodsco.net",
+  JAYC: "jaycfoods.com",
+  "JAY C": "jaycfoods.com",
+  PAYLESS: "pay-less.com",
+  "PAY LESS": "pay-less.com",
+  RULER: "rulerfoods.com",
+  "RULER FOODS": "rulerfoods.com",
 };
 
 function normalizeBanner(banner: string): string {

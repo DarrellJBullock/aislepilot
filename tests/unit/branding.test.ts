@@ -46,6 +46,18 @@ describe("getBannerLogoUrl", () => {
     expect(getBannerLogoUrl("FOOD4LESS")).toBe(
       "https://www.google.com/s2/favicons?domain=food4less.com&sz=128",
     );
+    expect(getBannerLogoUrl("FOODSCO")).toBe(
+      "https://www.google.com/s2/favicons?domain=foodsco.net&sz=128",
+    );
+    expect(getBannerLogoUrl("JAYC")).toBe(
+      "https://www.google.com/s2/favicons?domain=jaycfoods.com&sz=128",
+    );
+    expect(getBannerLogoUrl("PAYLESS")).toBe(
+      "https://www.google.com/s2/favicons?domain=pay-less.com&sz=128",
+    );
+    expect(getBannerLogoUrl("RULER")).toBe(
+      "https://www.google.com/s2/favicons?domain=rulerfoods.com&sz=128",
+    );
   });
 
   it("is undefined for unrecognized or fictional banners", () => {
