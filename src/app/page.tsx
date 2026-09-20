@@ -62,11 +62,11 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/sign-in">
-              <Button size="lg" variant="outline">Try the demo</Button>
+              <Button size="lg" variant="outline">Sign in</Button>
             </Link>
           </div>
           <p className="mt-3 text-sm text-ink-muted">
-            No credit card. Runs on demo data — no store account needed.
+            No credit card required. Live prices from your Kroger-family store.
           </p>
         </div>
         <LandingPreview />
@@ -122,7 +122,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-black/5 py-8 text-center text-sm text-ink-muted">
-        <p>AislePilot — demo MVP. Not affiliated with The Kroger Co. Product & price data is fictional.</p>
+        <p>AislePilot — not affiliated with The Kroger Co. Prices and availability are provided by Kroger and may vary.</p>
       </footer>
     </div>
   );
