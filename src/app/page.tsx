@@ -37,9 +37,9 @@ const mono = IBM_Plex_Mono({
 });
 
 const FEATURES = [
-  { icon: ListChecks, title: "Match your list to real products", body: "Type “milk” and pick the exact product, brand, and size — with the store’s current price." },
-  { icon: MapPin, title: "Shop by store route", body: "Items sort by department and aisle so you walk the store once, not five times." },
-  { icon: Wallet, title: "Know your total before checkout", body: "Live estimated, collected, and remaining totals — plus a budget you can actually keep." },
+  { icon: MapPin, title: "Shop the route, not the whole store", body: "Your list reorders itself to match this store’s real aisles — walk it once, start to finish, no backtracking." },
+  { icon: Wallet, title: "Watch your total as you shop", body: "See what you’ve spent and what’s left before you’re anywhere near the register — not after." },
+  { icon: ListChecks, title: "Every item, the real product", body: "Type “milk” and pick the exact product, brand, and size — with this store’s current price, not a guess." },
   { icon: Users, title: "Share the trip", body: "Invite family, split the list, and see who grabbed what in real time." },
   { icon: WifiOff, title: "Works offline", body: "Keep shopping when the signal drops. Changes sync when you’re back." },
   { icon: ScanBarcode, title: "Barcode-ready", body: "Scan-to-add foundation built in for fast, accurate item entry." },
@@ -49,7 +49,7 @@ const STEPS = [
   { n: "1", title: "Build your list", body: "Add items fast — one at a time or paste a whole list." },
   { n: "2", title: "Pick your store", body: "Choose a Kroger-family store to get its prices and layout." },
   { n: "3", title: "Match products", body: "Confirm the exact product for each item." },
-  { n: "4", title: "Shop the route", body: "Enter Shopping Mode and check items off as you go." },
+  { n: "4", title: "Shop the route", body: "Walk it once, check items off, and watch the total as you go — no backtracking, no surprises at checkout." },
 ];
 
 function SectionKicker({ children }: { children: React.ReactNode }) {
@@ -98,7 +98,7 @@ export default function LandingPage() {
         <section className="grid items-center gap-12 py-10 sm:py-16 lg:grid-cols-2">
           <div>
             <p className="font-[family-name:var(--font-mono)] text-xs font-medium uppercase tracking-[0.3em] text-[color:var(--ink-soft)]">
-              · Mobile-first shopping assistant ·
+              · Built for the walk-in shopper ·
             </p>
             <h1 className="mt-4 font-[family-name:var(--font-display)] text-6xl font-black uppercase leading-[0.95] tracking-tight text-[color:var(--ink)] sm:text-7xl">
               Your list.
@@ -108,8 +108,9 @@ export default function LandingPage() {
               Your total.
             </h1>
             <p className="mt-6 max-w-md text-lg text-[color:var(--ink-soft)]">
-              AislePilot turns a scribbled grocery list into an exact, priced, aisle-by-aisle
-              shopping plan for your Kroger-family store — so you spend less time wandering and
+              AislePilot is built for people who actually walk the aisles — not order ahead
+              online. It turns a scribbled grocery list into an exact route through this store’s
+              real layout, with a running total that keeps you honest, so you never wander and
               never blow the budget.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -170,10 +171,11 @@ export default function LandingPage() {
         {/* CTA */}
         <section className="my-12 overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 text-center text-white sm:px-12">
           <h2 className="font-[family-name:var(--font-display)] text-4xl font-black uppercase tracking-tight">
-            Ready for a calmer grocery run?
+            Never wander. Never overspend.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-brand-50">
-            Build a list in under a minute and see your whole trip — priced, routed, and ready.
+            Build a list in under a minute and walk in already knowing your route and your
+            total.
           </p>
           <div className="mt-7 flex justify-center">
             <Link href="/sign-up">
