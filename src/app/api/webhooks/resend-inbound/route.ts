@@ -23,14 +23,18 @@ export async function POST(request: Request) {
   try {
     event = resend.webhooks.verify({
       payload,
+      // Standard Webhooks spec header names — the SDK's internal verify()
+      // maps these to "webhook-id"/"webhook-timestamp"/"webhook-signature"
+      // (not the older "svix-*" naming) when computing the signature.
       headers: {
-        id: request.headers.get("svix-id") ?? "",
-        timestamp: request.headers.get("svix-timestamp") ?? "",
-        signature: request.headers.get("svix-signature") ?? "",
+        id: request.headers.get("webhook-id") ?? "",
+        timestamp: request.headers.get("webhook-timestamp") ?? "",
+        signature: request.headers.get("webhook-signature") ?? "",
       },
       webhookSecret,
     });
-  } catch {
+  } catch (err) {
+    console.error("[resend-inbound] signature verification failed:", err);
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
 
