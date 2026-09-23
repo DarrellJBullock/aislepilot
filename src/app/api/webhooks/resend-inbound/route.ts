@@ -25,30 +25,20 @@ export async function POST(request: Request) {
   try {
     event = resend.webhooks.verify({
       payload,
-      // Standard Webhooks spec header names — the SDK's internal verify()
-      // maps these to "webhook-id"/"webhook-timestamp"/"webhook-signature"
-      // (not the older "svix-*" naming) when computing the signature.
+      // Resend sends "svix-*" headers on the wire (confirmed via a live
+      // webhook delivery). The SDK's verify() relabels these internally to
+      // "webhook-*" for its own signature computation, but that's purely
+      // internal — the incoming request headers are still svix-*.
       headers: {
-        id: request.headers.get("webhook-id") ?? "",
-        timestamp: request.headers.get("webhook-timestamp") ?? "",
-        signature: request.headers.get("webhook-signature") ?? "",
+        id: request.headers.get("svix-id") ?? "",
+        timestamp: request.headers.get("svix-timestamp") ?? "",
+        signature: request.headers.get("svix-signature") ?? "",
       },
       webhookSecret,
     });
   } catch (err) {
-    // Diagnostic only, temporary — returned in the body (not just logged,
-    // since multi-arg console.error output isn't showing up intact in
-    // Vercel's log capture) so it's visible in Resend's webhook event log.
-    const headerNames: string[] = [];
-    request.headers.forEach((_value, key) => headerNames.push(key));
-    return NextResponse.json(
-      {
-        error: "invalid_signature",
-        message: err instanceof Error ? err.message : String(err),
-        headerNames,
-      },
-      { status: 401 },
-    );
+    console.error("[resend-inbound] signature verification failed:", err);
+    return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
 
   if (event.type === "email.received") {
