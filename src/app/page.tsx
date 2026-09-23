@@ -194,6 +194,15 @@ export default function LandingPage() {
           <p className="mt-1 text-xs text-[color:var(--ink-faint)]">
             Prices and availability are provided by Kroger and may vary.
           </p>
+          <p className="mt-3 text-xs text-[color:var(--ink-faint)]">
+            <Link href="/privacy" className="underline hover:text-[color:var(--ink-soft)]">
+              Privacy
+            </Link>
+            {" · "}
+            <Link href="/terms" className="underline hover:text-[color:var(--ink-soft)]">
+              Terms
+            </Link>
+          </p>
         </footer>
       </div>
     </div>
