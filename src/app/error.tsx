@@ -29,7 +29,7 @@ export default function GlobalError({
           </span>
           <h1 className="text-xl font-bold text-ink">Something went wrong</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            That's on us, not you. Try again, and if it keeps happening, let us know what you
+            That&apos;s on us, not you. Try again, and if it keeps happening, let us know what you
             were doing when it broke.
           </p>
           <Button className="mt-5" onClick={() => reset()}>

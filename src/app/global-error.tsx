@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 // Catches errors thrown by the root layout itself — error.tsx can't cover
 // those since it renders inside the layout. Must render its own <html>/<body>
 // since it replaces the whole page when triggered, so it can't reuse the
@@ -11,6 +13,10 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <html lang="en">
       <body style={{ background: "#f7f8fa" }}>
