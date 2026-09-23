@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, LogOut, Settings, Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, HelpCircle, Menu, X } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
@@ -11,6 +11,7 @@ import { Logo } from "./Logo";
 const NAV = [
   { href: "/dashboard", label: "Lists", icon: LayoutDashboard },
   { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/help", label: "Help", icon: HelpCircle },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
