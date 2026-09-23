@@ -36,20 +36,19 @@ export async function POST(request: Request) {
       webhookSecret,
     });
   } catch (err) {
-    // Diagnostic only, temporary: dump every incoming header name (not
-    // values, except the three we care about aren't secret) so we can see
-    // what Resend actually sends instead of guessing again.
-    const allHeaders: Record<string, string> = {};
-    request.headers.forEach((value, key) => {
-      allHeaders[key] = key.includes("signature") ? "[redacted]" : value;
-    });
-    console.error(
-      `[resend-inbound] signature verification failed (secret length ${webhookSecret.length}):`,
-      err,
-      "headers:",
-      JSON.stringify(allHeaders),
+    // Diagnostic only, temporary — returned in the body (not just logged,
+    // since multi-arg console.error output isn't showing up intact in
+    // Vercel's log capture) so it's visible in Resend's webhook event log.
+    const headerNames: string[] = [];
+    request.headers.forEach((_value, key) => headerNames.push(key));
+    return NextResponse.json(
+      {
+        error: "invalid_signature",
+        message: err instanceof Error ? err.message : String(err),
+        headerNames,
+      },
+      { status: 401 },
     );
-    return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
 
   if (event.type === "email.received") {
