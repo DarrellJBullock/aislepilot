@@ -11,8 +11,10 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FORWARD_FROM = "AislePilot Support <support@aisle-pilot.app>";
 
 export async function POST(request: Request) {
-  const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
-  const forwardTo = process.env.SUPPORT_FORWARD_TO;
+  // .trim() guards against a trailing newline/whitespace sneaking into the
+  // env var via copy-paste — base64 decoding the secret is strict about it.
+  const webhookSecret = process.env.RESEND_WEBHOOK_SECRET?.trim();
+  const forwardTo = process.env.SUPPORT_FORWARD_TO?.trim();
   if (!webhookSecret || !forwardTo) {
     console.error("[resend-inbound] RESEND_WEBHOOK_SECRET or SUPPORT_FORWARD_TO not configured");
     return NextResponse.json({ error: "not_configured" }, { status: 500 });
@@ -34,7 +36,13 @@ export async function POST(request: Request) {
       webhookSecret,
     });
   } catch (err) {
-    console.error("[resend-inbound] signature verification failed:", err);
+    // Length only — never log the secret itself. Helps tell a bad copy
+    // (wrong length) apart from a whitespace/encoding issue (right length,
+    // still fails).
+    console.error(
+      `[resend-inbound] signature verification failed (secret length ${webhookSecret.length}):`,
+      err,
+    );
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
 
