@@ -1,4 +1,5 @@
 import type { Product, ShoppingList, ShoppingListItem } from "../types";
+import { isResolved } from "../status";
 
 // Approximate grocery sales tax rate by state (2-letter USPS code), for
 // trip-total estimation only — not tax advice. Most US states exempt
@@ -112,6 +113,29 @@ export function computeTotals(list: ShoppingList, taxRate = 0): ListTotals {
   }
 
   return totals;
+}
+
+/**
+ * The single not-yet-resolved item most worth swapping for a cheaper
+ * product — the priciest remaining (matched, unresolved) item, since
+ * swapping it gives the biggest single saving. Undefined when there's no
+ * such item. Callers decide *when* to act on this (e.g. only once
+ * ListTotals.overBudget > 0) — this just picks which one.
+ */
+export function pickSwapCandidate(list: ShoppingList): ShoppingListItem | undefined {
+  const candidates = list.items.filter((i) => i.product && !isResolved(i.status));
+  if (candidates.length === 0) return undefined;
+  return candidates.reduce((priciest, item) =>
+    itemSubtotal(item) > itemSubtotal(priciest) ? item : priciest,
+  );
+}
+
+/**
+ * True when `alternative` is a genuinely cheaper stand-in for `current` —
+ * a different product with a lower effective unit price.
+ */
+export function isCheaperAlternative(current: Product, alternative: Product): boolean {
+  return alternative.id !== current.id && effectiveUnitPrice(alternative) < effectiveUnitPrice(current);
 }
 
 export function formatCurrency(value: number): string {

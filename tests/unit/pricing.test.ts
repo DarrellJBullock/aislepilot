@@ -6,6 +6,8 @@ import {
   computeTotals,
   formatCurrency,
   getGroceryTaxRate,
+  pickSwapCandidate,
+  isCheaperAlternative,
 } from "@aislepilot/domain/pricing";
 import { makeProduct, makeItem, makeList } from "../factories";
 
@@ -83,6 +85,64 @@ describe("computeTotals", () => {
     const t = computeTotals(list);
     expect(t.overBudget).toBe(0);
     expect(t.budgetRemaining).toBe(30);
+  });
+});
+
+describe("pickSwapCandidate", () => {
+  it("picks the priciest not-yet-resolved item", () => {
+    const list = makeList([
+      makeItem({ id: "a", status: "available", product: makeProduct({ currentPrice: 3 }) }),
+      makeItem({ id: "b", status: "available", product: makeProduct({ currentPrice: 9 }) }),
+      makeItem({ id: "c", status: "matched", product: makeProduct({ currentPrice: 5 }) }),
+    ]);
+    expect(pickSwapCandidate(list)?.id).toBe("b");
+  });
+
+  it("ignores collected, skipped, unavailable, and purchased items", () => {
+    const list = makeList([
+      makeItem({ id: "a", status: "collected", product: makeProduct({ currentPrice: 99 }) }),
+      makeItem({ id: "b", status: "skipped", product: makeProduct({ currentPrice: 99 }) }),
+      makeItem({ id: "c", status: "unavailable", product: makeProduct({ currentPrice: 99 }) }),
+      makeItem({ id: "d", status: "purchased", product: makeProduct({ currentPrice: 99 }) }),
+      makeItem({ id: "e", status: "available", product: makeProduct({ currentPrice: 2 }) }),
+    ]);
+    expect(pickSwapCandidate(list)?.id).toBe("e");
+  });
+
+  it("ignores unmatched items (no product)", () => {
+    const list = makeList([makeItem({ id: "a", status: "unmatched" })]);
+    expect(pickSwapCandidate(list)).toBeUndefined();
+  });
+
+  it("is undefined when there's nothing swappable", () => {
+    const list = makeList([makeItem({ id: "a", status: "collected", product: makeProduct() })]);
+    expect(pickSwapCandidate(list)).toBeUndefined();
+  });
+});
+
+describe("isCheaperAlternative", () => {
+  it("is true for a different, cheaper product", () => {
+    const current = makeProduct({ id: "p1", currentPrice: 5 });
+    const alt = makeProduct({ id: "p2", currentPrice: 3 });
+    expect(isCheaperAlternative(current, alt)).toBe(true);
+  });
+
+  it("is false for the same product", () => {
+    const current = makeProduct({ id: "p1", currentPrice: 5 });
+    expect(isCheaperAlternative(current, current)).toBe(false);
+  });
+
+  it("is false when the alternative isn't actually cheaper", () => {
+    const current = makeProduct({ id: "p1", currentPrice: 5 });
+    const alt = makeProduct({ id: "p2", currentPrice: 5 });
+    expect(isCheaperAlternative(current, alt)).toBe(false);
+  });
+
+  it("respects promotional pricing on both sides", () => {
+    const current = makeProduct({ id: "p1", regularPrice: 10, promotionalPrice: 4 });
+    const alt = makeProduct({ id: "p2", regularPrice: 6, currentPrice: 6 });
+    // current's effective price (promo 4) is already cheaper than alt (6)
+    expect(isCheaperAlternative(current, alt)).toBe(false);
   });
 });
 

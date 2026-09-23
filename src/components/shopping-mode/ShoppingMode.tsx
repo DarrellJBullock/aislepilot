@@ -19,7 +19,13 @@ import { useApp } from "@/lib/store/provider";
 import { useStore } from "@/lib/use-store";
 import { sortItems } from "@aislepilot/domain/routing";
 import { computeProgress } from "@aislepilot/domain/progress";
-import { computeTotals, formatCurrency, getGroceryTaxRate, itemSubtotal } from "@aislepilot/domain/pricing";
+import {
+  computeTotals,
+  formatCurrency,
+  getGroceryTaxRate,
+  itemSubtotal,
+  pickSwapCandidate,
+} from "@aislepilot/domain/pricing";
 import { isResolved } from "@aislepilot/domain/status";
 import { useSyncStatus } from "@/services/offline/useSyncStatus";
 import {
@@ -34,6 +40,7 @@ import {
 import { ProductMatchDrawer } from "@/components/products/ProductMatchDrawer";
 import { StoreLogo } from "@/components/stores/StoreLogo";
 import { SyncBadge } from "./SyncBadge";
+import { BudgetRescue } from "./BudgetRescue";
 import { cn } from "@/lib/utils";
 
 export function ShoppingMode({ listId }: { listId: string }) {
@@ -88,6 +95,7 @@ export function ShoppingMode({ listId }: { listId: string }) {
 
   const progress = computeProgress(list);
   const totals = computeTotals(list, getGroceryTaxRate(store?.state));
+  const swapCandidate = totals.overBudget > 0 ? pickSwapCandidate(list) : undefined;
   const focus = remaining[Math.min(cursor, Math.max(0, remaining.length - 1))];
   const allDone = remaining.length === 0;
 
@@ -150,6 +158,15 @@ export function ShoppingMode({ listId }: { listId: string }) {
               +{formatCurrency(totals.collectedTax)} · Total {formatCurrency(totals.collectedTotalWithTax)}
             </span>
           </div>
+        )}
+
+        {swapCandidate && (
+          <BudgetRescue
+            item={swapCandidate}
+            storeId={list.storeId}
+            overBudget={totals.overBudget}
+            onSwap={(product) => matchItem(list.id, swapCandidate.id, product)}
+          />
         )}
 
         {/* Focus card */}
