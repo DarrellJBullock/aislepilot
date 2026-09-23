@@ -36,12 +36,18 @@ export async function POST(request: Request) {
       webhookSecret,
     });
   } catch (err) {
-    // Length only — never log the secret itself. Helps tell a bad copy
-    // (wrong length) apart from a whitespace/encoding issue (right length,
-    // still fails).
+    // Diagnostic only, temporary: dump every incoming header name (not
+    // values, except the three we care about aren't secret) so we can see
+    // what Resend actually sends instead of guessing again.
+    const allHeaders: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      allHeaders[key] = key.includes("signature") ? "[redacted]" : value;
+    });
     console.error(
       `[resend-inbound] signature verification failed (secret length ${webhookSecret.length}):`,
       err,
+      "headers:",
+      JSON.stringify(allHeaders),
     );
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
