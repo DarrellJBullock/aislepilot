@@ -125,7 +125,14 @@ export function StorePicker({
           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-[72px] w-full rounded-2xl" />)}
 
         {!loading && stores.length === 0 && (
-          <Text className="py-6 text-center text-sm text-ink-muted">No stores found.</Text>
+          <View className="py-6">
+            <Text className="text-center text-sm text-ink-muted">No stores found.</Text>
+            <Text className="mt-1 text-center text-xs text-ink-muted">
+              AislePilot only works near Kroger-family stores — not yet in New Jersey,
+              Pennsylvania or the rest of the Northeast. Tap “Not sure which stores are included?”
+              above to see the map.
+            </Text>
+          </View>
         )}
 
         {!loading &&

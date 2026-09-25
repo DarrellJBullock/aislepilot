@@ -21,6 +21,7 @@ describe("StorePicker", () => {
     await waitFor(() => {
       expect(screen.getByText("No stores found.")).toBeInTheDocument();
     });
+    expect(screen.getByText(/not yet in New Jersey/)).toBeInTheDocument();
     // Live, just empty — must not be mistaken for the demo-data fallback.
     expect(screen.queryByText(/fictional demo stores/)).not.toBeInTheDocument();
   });

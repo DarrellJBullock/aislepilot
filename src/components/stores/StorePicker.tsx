@@ -73,7 +73,14 @@ export function StorePicker({
           ))}
 
         {!loading && stores.length === 0 && (
-          <p className="py-6 text-center text-sm text-ink-muted">No stores found.</p>
+          <div className="py-6 text-center text-sm text-ink-muted">
+            <p>No stores found.</p>
+            <p className="mt-1 text-xs">
+              AislePilot only works near Kroger-family stores — not yet in New Jersey,
+              Pennsylvania or the rest of the Northeast. Open “Not sure which stores are
+              included?” above to see which brands to look for.
+            </p>
+          </div>
         )}
 
         {!loading &&
