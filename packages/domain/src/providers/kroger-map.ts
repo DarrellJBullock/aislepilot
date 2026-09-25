@@ -14,6 +14,16 @@ import type {
   KrogerProduct,
 } from "./kroger-types";
 
+// Kroger's Locations API also returns internal logistics nodes (delivery
+// "Spokes", warehouses, forecast sheds, and cancelled ones) that aren't
+// places a shopper can walk into.
+const NON_STORE_NAME = /\b(spoke|warehouse|forecast shed|hub)\b/i;
+
+/** False for logistics nodes that Kroger's Locations API lists like stores. */
+export function isRealStore(loc: KrogerLocation): boolean {
+  return !NON_STORE_NAME.test(loc.name ?? "");
+}
+
 export function mapStore(loc: KrogerLocation): Store {
   const addr = loc.address ?? {};
   return {

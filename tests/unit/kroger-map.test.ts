@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
+import { isRealStore, mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
 import type { KrogerLocation, KrogerProduct } from "@aislepilot/domain/providers/kroger-types";
 
 describe("mapStore", () => {
@@ -17,6 +17,27 @@ describe("mapStore", () => {
     expect(store.demo).toBe(false);
     expect(store.zip).toBe("45202");
     expect(store.departments[0].name).toBe("Produce");
+  });
+});
+
+describe("isRealStore", () => {
+  it("keeps real storefronts", () => {
+    for (const name of ["Kroger Main St", "Harris Teeter - Rehoboth", "Fred Meyer - Hawthorne"]) {
+      expect(isRealStore({ locationId: "1", name }), name).toBe(true);
+    }
+    expect(isRealStore({ locationId: "1" })).toBe(true);
+  });
+
+  it("drops logistics nodes the Locations API lists like stores", () => {
+    for (const name of [
+      "Harris Teeter - Philadelphia Spoke",
+      "Kroger - Birmingham Spoke",
+      "Cancelled Jacksonville Spoke",
+      "Kroger Regional Warehouse",
+      "Kroger Forecast Shed",
+    ]) {
+      expect(isRealStore({ locationId: "1", name }), name).toBe(false);
+    }
   });
 });
 

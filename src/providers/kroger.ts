@@ -15,7 +15,7 @@ import type {
   KrogerTokenResponse,
 } from "@aislepilot/domain/providers/kroger-types";
 import { resolveCityToZip } from "@/lib/geocode";
-import { mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
+import { isRealStore, mapProduct, mapStore } from "@aislepilot/domain/providers/kroger-map";
 
 export interface KrogerConfig {
   clientId: string;
@@ -112,7 +112,7 @@ export class KrogerProvider implements RetailerProvider {
       "filter.zipCode.near": zip,
       "filter.limit": input.limit ?? 15,
     });
-    return res.data.map(mapStore);
+    return res.data.filter(isRealStore).map(mapStore);
   }
 
   async getStore(storeId: string): Promise<Store> {
