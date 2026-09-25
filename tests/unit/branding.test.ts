@@ -103,3 +103,13 @@ describe("KROGER_COVERAGE", () => {
     }
   });
 });
+
+describe("mobile coverage map paths", () => {
+  it("has an outline for every state in KROGER_COVERAGE", async () => {
+    const { US_STATE_PATHS } = await import("../../apps/mobile/src/lib/us-state-paths");
+    expect(Object.keys(US_STATE_PATHS)).toHaveLength(51);
+    for (const state of Object.keys(KROGER_COVERAGE)) {
+      expect(US_STATE_PATHS[state], state).toMatch(/^M/);
+    }
+  });
+});

@@ -6,6 +6,7 @@ import type { Store } from "@aislepilot/domain/types";
 import { searchStores } from "../../lib/retailer";
 import { Input, Skeleton, Badge } from "../ui";
 import { StoreLogo } from "./StoreLogo";
+import { CoverageMap } from "./CoverageMap";
 import { KrogerFamilyList } from "./KrogerFamilyList";
 import { cn } from "../../lib/cn";
 
@@ -102,6 +103,9 @@ export function StorePicker({
       </Pressable>
       {showBanners && (
         <View className="mb-3">
+          <View className="mb-4">
+            <CoverageMap />
+          </View>
           <Text className="mb-2 text-xs text-ink-muted">
             Any of these Kroger-family stores works — search by ZIP code near you.
           </Text>
