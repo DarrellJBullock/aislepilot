@@ -69,7 +69,7 @@ export function StorePicker({
           <Search size={16} color="#6b7688" style={{ position: "absolute", left: 12, top: 14, zIndex: 1 }} />
           <Input
             className="pl-9"
-            placeholder="Search by city, banner, or ZIP"
+            placeholder="Search by ZIP code or city"
             value={query}
             onChangeText={setQuery}
             accessibilityLabel="Search stores"

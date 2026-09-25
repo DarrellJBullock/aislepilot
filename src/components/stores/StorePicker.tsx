@@ -43,7 +43,7 @@ export function StorePicker({
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
         <Input
           className="pl-9"
-          placeholder="Search by city, banner, or zip"
+          placeholder="Search by ZIP code or city"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search stores"
