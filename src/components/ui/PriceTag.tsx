@@ -1,5 +1,5 @@
 import type { Product } from "@aislepilot/domain/types";
-import { effectiveUnitPrice, formatCurrency, isOnSale } from "@aislepilot/domain/pricing";
+import { effectiveUnitPrice, formatCurrency, hasCurrentPrice, isOnSale } from "@aislepilot/domain/pricing";
 import { cn } from "@/lib/utils";
 
 export function PriceTag({
@@ -12,6 +12,9 @@ export function PriceTag({
   size?: "sm" | "md" | "lg";
 }) {
   if (!product) return <span className="text-ink-muted">—</span>;
+  if (!hasCurrentPrice(product)) {
+    return <span className={cn("text-xs text-ink-muted", className)}>Price unavailable</span>;
+  }
   const price = effectiveUnitPrice(product);
   const sale = isOnSale(product);
   const sizes = {

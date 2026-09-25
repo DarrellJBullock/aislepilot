@@ -43,3 +43,14 @@ export async function fetchBarcode(
   if (!res.ok) return { product: null, live: false };
   return res.json();
 }
+
+/** Fresh price/availability for products already on a list (ids as stored, "storeId:externalId"). */
+export async function fetchFreshProducts(
+  ids: string[],
+  storeId: string,
+): Promise<{ products: Product[]; live: boolean }> {
+  const qs = new URLSearchParams({ storeId, ids: ids.join(",") });
+  const res = await fetch(`/api/retailers/products/refresh?${qs.toString()}`);
+  if (!res.ok) return { products: [], live: false };
+  return res.json();
+}

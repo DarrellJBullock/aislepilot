@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Profile } from "@aislepilot/domain/types";
 import * as S from "@aislepilot/domain/store/state";
+import { slimProduct, withoutPrices } from "@aislepilot/domain/pricing";
 import { rowToList, itemToRow, memberToRow, type ListRow } from "@aislepilot/domain/store/supabase-map";
 import { displayNameFromEmail } from "@aislepilot/domain/utils";
 import type { WriteOp } from "@aislepilot/domain/sync/queue";
@@ -388,6 +389,19 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
         const item = itemById(next, listId, itemId);
         if (item) run({ table: "shopping_list_items", kind: "update", recordId: itemId, patch: itemToRow(item) });
       },
+      refreshProducts: (listId, fresh) => {
+        const { next } = apply((s) => S.refreshProducts(s, listId, fresh));
+        const ids = new Set(fresh.map((p) => p.id));
+        for (const item of next.lists.find((l) => l.id === listId)?.items ?? []) {
+          if (!item.product || !ids.has(item.product.id)) continue;
+          run({
+            table: "shopping_list_items",
+            kind: "update",
+            recordId: item.id,
+            patch: { product: itemToRow(item).product },
+          });
+        }
+      },
       unmatchItem: (listId, itemId) => {
         const { next } = apply((s) => S.unmatchItem(s, listId, itemId));
         const item = itemById(next, listId, itemId);
@@ -453,7 +467,7 @@ export function SupabaseAppProvider({ children }: { children: ReactNode }) {
       saveProduct: (product) => {
         const { next } = apply((s) => S.saveProduct(s, product));
         const saved = next.savedProducts[0];
-        if (saved) run({ table: "saved_products", kind: "insert", rows: [{ id: saved.id, user_id: uid, product }] });
+        if (saved) run({ table: "saved_products", kind: "insert", rows: [{ id: saved.id, user_id: uid, product: slimProduct(withoutPrices(product)) }] });
       },
       recordPurchase: (entry) => {
         const { next } = apply((s) => S.recordPurchase(s, entry));

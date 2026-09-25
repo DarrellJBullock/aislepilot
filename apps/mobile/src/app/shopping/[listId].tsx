@@ -36,6 +36,7 @@ import { ProductMatchSheet } from "../../components/products/ProductMatchSheet";
 import { BarcodeScanner } from "../../components/products/BarcodeScanner";
 import { StoreLogo } from "../../components/stores/StoreLogo";
 import { SyncBadge } from "../../components/shopping-mode/SyncBadge";
+import { useFreshPrices } from "../../lib/use-fresh-prices";
 
 // A scanned product only auto-matches an unresolved item when confident —
 // otherwise it's treated as an off-list scan and added as a new item.
@@ -50,6 +51,7 @@ export default function ShoppingMode() {
   const { lists, purchaseHistory, setItemStatus, updateItem, matchItem, addMatchedItem, restoreItem, recordPurchase } =
     useApp();
   const list = lists.find((l) => l.id === listId);
+  useFreshPrices(list);
   const [cursor, setCursor] = useState(0);
   const [showDone, setShowDone] = useState(false);
   const [substitute, setSubstitute] = useState<string | null>(null);
@@ -195,6 +197,12 @@ export default function ShoppingMode() {
             <Text className="font-bold text-ink">{formatCurrency(totals.remainingTotal)}</Text>
           </View>
         </View>
+        {totals.unpricedCount > 0 && (
+          <Text className="mt-2 text-center text-xs text-ink-muted">
+            {totals.unpricedCount} item{totals.unpricedCount === 1 ? "" : "s"} waiting on a current
+            price — the total leaves {totals.unpricedCount === 1 ? "it" : "them"} out for now.
+          </Text>
+        )}
         {totals.taxRate > 0 && (
           <View className="mt-2 flex-row items-center justify-between rounded-2xl border border-black/5 bg-white px-3 py-2">
             <Text className="text-xs text-ink-muted">

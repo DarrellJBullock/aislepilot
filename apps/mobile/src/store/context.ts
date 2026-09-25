@@ -41,6 +41,8 @@ export interface AppContextValue {
   removeItem: (listId: string, itemId: string) => void;
   matchItem: (listId: string, itemId: string, product: Product) => void;
   unmatchItem: (listId: string, itemId: string) => void;
+  /** Fold freshly fetched price/availability into the list's matched items. */
+  refreshProducts: (listId: string, fresh: Product[]) => void;
   setItemStatus: (
     listId: string,
     itemId: string,

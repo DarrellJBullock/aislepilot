@@ -8,6 +8,12 @@ import {
   getGroceryTaxRate,
   pickSwapCandidate,
   isCheaperAlternative,
+  isPriceFresh,
+  dropStalePrices,
+  hasCurrentPrice,
+  needsPriceRefresh,
+  slimProduct,
+  withoutPrices,
 } from "@aislepilot/domain/pricing";
 import { makeProduct, makeItem, makeList } from "../factories";
 
@@ -202,5 +208,64 @@ describe("computeTotals with tax", () => {
     expect(t.collectedTax).toBe(0.7);
     expect(t.estimatedTotalWithTax).toBe(32.1);
     expect(t.collectedTotalWithTax).toBe(10.7);
+  });
+});
+
+describe("price freshness", () => {
+  const NOW = Date.parse("2026-09-25T12:00:00.000Z");
+  const hoursAgo = (h: number) => new Date(NOW - h * 3600_000).toISOString();
+
+  it("trusts a price for 24 hours, then not", () => {
+    expect(isPriceFresh(makeProduct({ pricedAt: hoursAgo(23) }), NOW)).toBe(true);
+    expect(isPriceFresh(makeProduct({ pricedAt: hoursAgo(25) }), NOW)).toBe(false);
+    expect(isPriceFresh(makeProduct({ pricedAt: undefined }), NOW)).toBe(false);
+    expect(isPriceFresh(makeProduct({ pricedAt: "garbage" }), NOW)).toBe(false);
+  });
+
+  it("dropStalePrices keeps fresh products and strips expired ones", () => {
+    const fresh = makeProduct({ pricedAt: hoursAgo(1) });
+    expect(dropStalePrices(fresh, NOW)).toBe(fresh);
+
+    const stale = dropStalePrices(
+      makeProduct({ pricedAt: hoursAgo(30), promotionalPrice: 3 }),
+      NOW,
+    );
+    expect(hasCurrentPrice(stale)).toBe(false);
+    expect(stale.availability).toBe("unknown");
+    expect(stale.pricedAt).toBeUndefined();
+    expect(stale.name).toBe("Whole Milk"); // identity survives
+  });
+
+  it("slimProduct drops description/metadata and stamps pricedAt only when priced", () => {
+    const slim = slimProduct(
+      makeProduct({ description: "Whole Milk", metadata: { itemId: "x" } }),
+      "2026-09-25T12:00:00.000Z",
+    );
+    expect(slim).not.toHaveProperty("description");
+    expect(slim).not.toHaveProperty("metadata");
+    expect(slim.pricedAt).toBe("2026-09-25T12:00:00.000Z");
+
+    // an existing timestamp is never extended
+    expect(slimProduct(makeProduct({ pricedAt: hoursAgo(20) })).pricedAt).toBe(hoursAgo(20));
+    // nothing to stamp when there's no price
+    expect(slimProduct(withoutPrices(makeProduct())).pricedAt).toBeUndefined();
+  });
+
+  it("needsPriceRefresh flags missing or expired prices", () => {
+    expect(needsPriceRefresh(makeProduct({ pricedAt: hoursAgo(1) }), NOW)).toBe(false);
+    expect(needsPriceRefresh(makeProduct({ pricedAt: hoursAgo(48) }), NOW)).toBe(true);
+    expect(needsPriceRefresh(withoutPrices(makeProduct()), NOW)).toBe(true);
+    expect(needsPriceRefresh(undefined, NOW)).toBe(false);
+  });
+
+  it("computeTotals counts items with no current price", () => {
+    const list = makeList([
+      makeItem({ id: "a", status: "matched", product: makeProduct({ pricedAt: hoursAgo(1) }) }),
+      makeItem({ id: "b", status: "matched", product: withoutPrices(makeProduct({ id: "p2" })) }),
+      makeItem({ id: "c", status: "skipped", product: withoutPrices(makeProduct({ id: "p3" })) }),
+    ]);
+    const totals = computeTotals(list);
+    expect(totals.unpricedCount).toBe(1); // skipped items don't count
+    expect(totals.estimatedTotal).toBe(4);
   });
 });

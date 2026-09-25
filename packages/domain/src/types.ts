@@ -106,6 +106,8 @@ export interface Product {
   locationSource: LocationSource;
   routeOrder?: number;
   sourceUpdatedAt?: string;
+  /** When price/availability were fetched from the retailer (see pricing/freshness). */
+  pricedAt?: string;
   metadata?: Record<string, unknown>;
 }
 

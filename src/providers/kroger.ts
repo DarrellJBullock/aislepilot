@@ -144,6 +144,27 @@ export class KrogerProvider implements RetailerProvider {
     return mapProduct(res.data, storeId);
   }
 
+  async getProducts(productIds: string[], storeId?: string): Promise<Product[]> {
+    const externalIds = [
+      ...new Set(productIds.map((id) => (id.includes(":") ? id.split(":").pop()! : id))),
+    ].slice(0, 50);
+    if (externalIds.length === 0) return [];
+    try {
+      const res = await this.authedGet<KrogerListResponse<KrogerProduct>>("/products", {
+        "filter.productId": externalIds.join(","),
+        "filter.locationId": storeId,
+        "filter.limit": externalIds.length,
+      });
+      if (res.data.length > 0) return res.data.map((p) => mapProduct(p, storeId));
+    } catch {
+      // fall through to one-by-one lookups
+    }
+    const settled = await Promise.allSettled(
+      externalIds.slice(0, 25).map((id) => this.getProduct(id, storeId)),
+    );
+    return settled.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
+  }
+
   async getAvailability(
     productId: string,
     storeId: string,

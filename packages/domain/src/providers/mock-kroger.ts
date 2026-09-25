@@ -62,6 +62,13 @@ export class MockKrogerProvider implements RetailerProvider {
     return product;
   }
 
+  async getProducts(productIds: string[], storeId?: string): Promise<Product[]> {
+    const found = await Promise.all(
+      productIds.map((id) => this.getProduct(id, storeId).catch(() => null)),
+    );
+    return found.filter((p): p is Product => p !== null);
+  }
+
   async getAvailability(
     productId: string,
     storeId: string,

@@ -103,7 +103,6 @@ export function mapProduct(p: KrogerProduct, storeId?: string): Product {
     externalId: p.productId,
     name: p.description ?? p.brand ?? "Product",
     brand: p.brand,
-    description: p.description,
     category: p.categories?.[0],
     department,
     imageUrl: pickImage(p.images),
@@ -119,6 +118,6 @@ export function mapProduct(p: KrogerProduct, storeId?: string): Product {
     section: loc.section,
     locationSource: loc.locationSource,
     routeOrder: department ? departmentRouteOrder(department) : undefined,
-    metadata: { itemId: item.itemId },
+    pricedAt: new Date().toISOString(),
   };
 }

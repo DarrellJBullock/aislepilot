@@ -176,8 +176,10 @@ The `KrogerProvider` is already implemented — you only need credentials:
 - UPC term search → `lookupBarcode`; `items[].inventory.stockLevel` → availability.
 - All calls stay server-side; the browser continues to use `/api/retailers/*`.
 
-Optionally cache responses into `products_cache` / `store_product_locations` to
-stay within Kroger's per-day rate limits.
+Kroger's terms don't allow long-lived copies of its data, so lists persist only a
+slim product snapshot (no description/metadata). Prices are trusted for 24 hours
+(`PRICE_TTL_MS`) and re-fetched via `/api/retailers/products/refresh` when a list
+is opened; saved products keep no prices. Don't add a response cache table.
 
 ## Documentation
 - `docs/implementation-plan.md` · `docs/architecture.md` · `docs/design-system.md`

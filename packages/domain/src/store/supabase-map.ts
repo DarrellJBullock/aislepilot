@@ -6,6 +6,7 @@ import type {
   ShoppingListItem,
   ShoppingListMember,
 } from "../types";
+import { dropStalePrices, slimProduct } from "../pricing";
 
 // ---- Row shapes (subset of the columns we read/write) ----
 
@@ -58,7 +59,7 @@ export function rowToItem(r: ItemRow): ShoppingListItem {
     notes: r.notes ?? undefined,
     priority: r.priority as ItemPriority,
     status: r.status as ItemStatus,
-    product: r.product ?? undefined,
+    product: r.product ? dropStalePrices(r.product) : undefined,
     substituteFor: r.substitute_for ?? undefined,
     collectedBy: r.collected_by ?? undefined,
     updatedAt: r.updated_at,
@@ -103,7 +104,7 @@ export function itemToRow(i: ShoppingListItem): ItemRow {
     notes: i.notes ?? null,
     priority: i.priority,
     status: i.status,
-    product: i.product ?? null,
+    product: i.product ? slimProduct(i.product) : null,
     substitute_for: i.substituteFor ?? null,
     collected_by: i.collectedBy ?? null,
     updated_at: i.updatedAt,

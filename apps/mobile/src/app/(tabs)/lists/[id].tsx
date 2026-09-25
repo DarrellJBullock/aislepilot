@@ -14,6 +14,7 @@ import { ItemList } from "../../../components/lists/ItemList";
 import { StorePicker } from "../../../components/stores/StorePicker";
 import { StoreLogo } from "../../../components/stores/StoreLogo";
 import { MembersPanel } from "../../../components/collaboration/MembersPanel";
+import { useFreshPrices } from "../../../lib/use-fresh-prices";
 
 export default function ListDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +26,7 @@ export default function ListDetail() {
   const [sharing, setSharing] = useState(false);
 
   const list = lists.find((l) => l.id === id);
+  useFreshPrices(list);
   const store = useStore(list?.storeId);
 
   if (!list) {

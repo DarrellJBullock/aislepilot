@@ -12,12 +12,14 @@ import { ItemEntry } from "./ItemEntry";
 import { ItemList } from "./ItemList";
 import { ListSettings } from "./ListSettings";
 import { MembersPanel } from "@/components/collaboration/MembersPanel";
+import { useFreshPrices } from "@/hooks/useFreshPrices";
 
 export function ListDetail({ listId }: { listId: string }) {
   const { lists } = useApp();
   const [settings, setSettings] = useState(false);
   const [members, setMembers] = useState(false);
   const list = lists.find((l) => l.id === listId);
+  useFreshPrices(list);
   const store = useStore(list?.storeId);
 
   if (!list) {

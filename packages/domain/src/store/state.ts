@@ -231,6 +231,36 @@ export function matchItem(
   );
 }
 
+/**
+ * Fold freshly fetched retailer data (price, availability, aisle) into the
+ * items already matched to those products; identity fields are kept.
+ */
+export function refreshProducts(state: AppState, listId: string, fresh: Product[]): AppState {
+  const byId = new Map(fresh.map((p) => [p.id, p]));
+  if (byId.size === 0) return state;
+  return mapList(state, listId, (l) => ({
+    ...l,
+    items: l.items.map((i) => {
+      const f = i.product && byId.get(i.product.id);
+      if (!i.product || !f) return i;
+      return {
+        ...i,
+        product: {
+          ...i.product,
+          regularPrice: f.regularPrice,
+          currentPrice: f.currentPrice,
+          promotionalPrice: f.promotionalPrice,
+          availability: f.availability,
+          aisle: f.aisle ?? i.product.aisle,
+          section: f.section ?? i.product.section,
+          locationSource: f.aisle ? f.locationSource : i.product.locationSource,
+          pricedAt: f.pricedAt ?? new Date().toISOString(),
+        },
+      };
+    }),
+  }));
+}
+
 export function unmatchItem(
   state: AppState,
   listId: string,

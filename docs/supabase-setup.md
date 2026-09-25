@@ -21,10 +21,10 @@ Or paste `supabase/migrations/0001_init.sql`, `0002_rls.sql`, then
 `0003_push_tokens.sql` into the SQL editor and run them in order (or run
 `supabase/schema.sql`, which combines all three).
 
-**What they create**
+**What they create** (`0004_slim_product_snapshots.sql` later drops the unused `products_cache` and scrubs old stored prices)
 - Tables: `profiles`, `retailers`, `stores`, `store_departments`,
   `shopping_lists`, `shopping_list_members`, `shopping_list_items`,
-  `products_cache`, `store_product_locations`, `purchase_history`,
+  `store_product_locations`, `purchase_history`,
   `saved_products`, `device_push_tokens` — all UUID PKs with `created_at` /
   `updated_at`, FKs, indexes.
 - Row Level Security on every user table: a list is visible only to its owner and

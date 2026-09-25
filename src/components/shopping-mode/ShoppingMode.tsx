@@ -42,10 +42,12 @@ import { StoreLogo } from "@/components/stores/StoreLogo";
 import { SyncBadge } from "./SyncBadge";
 import { BudgetRescue } from "./BudgetRescue";
 import { cn } from "@/lib/utils";
+import { useFreshPrices } from "@/hooks/useFreshPrices";
 
 export function ShoppingMode({ listId }: { listId: string }) {
   const { lists, purchaseHistory, setItemStatus, updateItem, matchItem, restoreItem, recordPurchase } = useApp();
   const list = lists.find((l) => l.id === listId);
+  useFreshPrices(list);
   const [cursor, setCursor] = useState(0);
   const [showDone, setShowDone] = useState(false);
   const [substitute, setSubstitute] = useState<string | null>(null);
@@ -158,6 +160,13 @@ export function ShoppingMode({ listId }: { listId: string }) {
               +{formatCurrency(totals.collectedTax)} · Total {formatCurrency(totals.collectedTotalWithTax)}
             </span>
           </div>
+        )}
+
+        {totals.unpricedCount > 0 && (
+          <p className="mt-2 text-center text-xs text-ink-muted">
+            {totals.unpricedCount} item{totals.unpricedCount === 1 ? "" : "s"} waiting on a current
+            price — the total leaves {totals.unpricedCount === 1 ? "it" : "them"} out for now.
+          </p>
         )}
 
         {swapCandidate && (

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import type { Product } from "@aislepilot/domain/types";
-import { effectiveUnitPrice, formatCurrency, isOnSale } from "@aislepilot/domain/pricing";
+import { effectiveUnitPrice, formatCurrency, hasCurrentPrice, isOnSale } from "@aislepilot/domain/pricing";
 import { cn } from "../../lib/cn";
 
 export function PriceTag({
@@ -13,6 +13,9 @@ export function PriceTag({
   size?: "sm" | "md" | "lg";
 }) {
   if (!product) return <Text className="text-ink-muted">—</Text>;
+  if (!hasCurrentPrice(product)) {
+    return <Text className={cn("text-xs text-ink-muted", className)}>Price unavailable</Text>;
+  }
   const price = effectiveUnitPrice(product);
   const sale = isOnSale(product);
   const sizeClass = { sm: "text-sm", md: "text-[15px]", lg: "text-xl" }[size];

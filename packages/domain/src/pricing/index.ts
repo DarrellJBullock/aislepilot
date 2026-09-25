@@ -33,6 +33,55 @@ export function getGroceryTaxRate(state?: string): number {
   return GROCERY_TAX_RATE[state.trim().toUpperCase()] ?? 0;
 }
 
+// ---- Price freshness ----
+// Kroger's terms don't let us keep long-lived copies of its data, so what we
+// persist is a slim snapshot: enough to show and route the item, with prices
+// only trusted for PRICE_TTL_MS after they were fetched. Older prices are
+// dropped on read and re-fetched from Kroger when the list is opened.
+
+export const PRICE_TTL_MS = 24 * 60 * 60 * 1000;
+
+const PRICE_FIELDS = ["regularPrice", "currentPrice", "promotionalPrice"] as const;
+
+export function hasCurrentPrice(product?: Product): boolean {
+  return !!product && PRICE_FIELDS.some((f) => typeof product[f] === "number");
+}
+
+export function isPriceFresh(product: Product, nowMs = Date.now()): boolean {
+  if (!product.pricedAt) return false;
+  const t = Date.parse(product.pricedAt);
+  return Number.isFinite(t) && nowMs - t < PRICE_TTL_MS;
+}
+
+/** A product without prices/availability — what we keep when no price is current. */
+export function withoutPrices(product: Product): Product {
+  const rest = { ...product };
+  for (const f of PRICE_FIELDS) delete rest[f];
+  delete rest.pricedAt;
+  delete rest.sourceUpdatedAt;
+  rest.availability = "unknown";
+  return rest;
+}
+
+/** What we persist: drops fields we don't need (description, raw metadata). */
+export function slimProduct(product: Product, nowIso = new Date().toISOString()): Product {
+  const { description: _d, metadata: _m, ...rest } = product;
+  void _d;
+  void _m;
+  const pricedAt = product.pricedAt ?? (hasCurrentPrice(product) ? nowIso : undefined);
+  return pricedAt ? { ...rest, pricedAt } : rest;
+}
+
+/** True when a stored product has no price we can trust (missing or expired). */
+export function needsPriceRefresh(product: Product | undefined, nowMs = Date.now()): boolean {
+  return !!product && (!hasCurrentPrice(product) || !isPriceFresh(product, nowMs));
+}
+
+/** Applied to stored products on read: expired prices are discarded. */
+export function dropStalePrices(product: Product, nowMs = Date.now()): Product {
+  return isPriceFresh(product, nowMs) ? product : withoutPrices(product);
+}
+
 /** Effective unit price: promo wins, then current, then regular. */
 export function effectiveUnitPrice(product?: Product): number {
   if (!product) return 0;
@@ -71,16 +120,20 @@ export interface ListTotals {
   collectedTax: number;
   estimatedTotalWithTax: number;
   collectedTotalWithTax: number;
+  /** Counted items with no current price (expired offline) — the total excludes them. */
+  unpricedCount: number;
 }
 
 /** taxRate is the store's grocery tax rate — see getGroceryTaxRate(). 0 (the default) omits tax entirely. */
 export function computeTotals(list: ShoppingList, taxRate = 0): ListTotals {
   let estimatedTotal = 0;
   let collectedTotal = 0;
+  let unpricedCount = 0;
 
   for (const item of list.items) {
     if (!item.product) continue;
     if (!COUNTED_TOWARD_ESTIMATE.includes(item.status)) continue;
+    if (!hasCurrentPrice(item.product)) unpricedCount++;
     const sub = itemSubtotal(item);
     estimatedTotal += sub;
     if (item.status === "collected" || item.status === "purchased") {
@@ -104,6 +157,7 @@ export function computeTotals(list: ShoppingList, taxRate = 0): ListTotals {
     collectedTax,
     estimatedTotalWithTax: round(estimatedTotal + estimatedTax),
     collectedTotalWithTax: round(collectedTotal + collectedTax),
+    unpricedCount,
   };
 
   if (typeof list.budget === "number") {

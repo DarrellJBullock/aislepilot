@@ -112,3 +112,16 @@ export async function lookupBarcode(
   const product = await mock.lookupBarcode(upc, storeId);
   return { product, live: false, offline: true };
 }
+
+/** Fresh price/availability for products already on a list (ids as stored, "storeId:externalId"). */
+export async function fetchFreshProducts(ids: string[], storeId: string): Promise<Product[]> {
+  if (!API_BASE_URL) return mock.getProducts(ids, storeId);
+  try {
+    const qs = new URLSearchParams({ storeId, ids: ids.join(",") });
+    const res = await timedFetch(`${API_BASE_URL}/api/retailers/products/refresh?${qs.toString()}`);
+    if (res.ok) return ((await res.json()) as { products: Product[] }).products;
+  } catch {
+    // offline / unreachable: keep whatever the list already shows
+  }
+  return [];
+}

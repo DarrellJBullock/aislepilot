@@ -122,6 +122,7 @@ export function LocalAppProvider({ children }: { children: ReactNode }) {
         setState((s) => S.removeItem(s, listId, itemId)),
       matchItem: (listId, itemId, product) =>
         setState((s) => S.matchItem(s, listId, itemId, product)),
+      refreshProducts: (listId, fresh) => setState((s) => S.refreshProducts(s, listId, fresh)),
       unmatchItem: (listId, itemId) =>
         setState((s) => S.unmatchItem(s, listId, itemId)),
       setItemStatus: (listId, itemId, status, collectedBy) =>

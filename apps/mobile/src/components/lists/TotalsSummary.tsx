@@ -22,6 +22,13 @@ export function TotalsSummary({ list, store }: { list: ShoppingList; store?: Sto
           <Stat label="Remaining" value={formatCurrency(totals.remainingTotal)} />
         </View>
 
+        {totals.unpricedCount > 0 && (
+          <Text className="mt-3 text-center text-xs text-ink-muted">
+            {totals.unpricedCount} item{totals.unpricedCount === 1 ? "" : "s"} waiting on a current
+            price — refreshing when you&apos;re online. The total leaves them out for now.
+          </Text>
+        )}
+
         {totals.taxRate > 0 && (
           <View className="mt-3 flex-row items-center justify-between border-t border-black/5 pt-3">
             <Text className="text-sm text-ink-muted">
