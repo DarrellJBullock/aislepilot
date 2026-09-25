@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
 import { getRetailerProvider, isLiveRetailer } from "@/services/retailers/factory";
 import { cacheStores } from "@/lib/retailer-cache";
-import { requireUser } from "@/lib/api-auth";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { guardRetailerRoute } from "@/lib/api-auth";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireUser(request);
-  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  if (!checkRateLimit(`store:${user.id}`, 30, 60_000)) {
-    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
-  }
+  const blocked = await guardRetailerRoute(request, "store");
+  if (blocked) return blocked;
 
   const { id } = await params;
   const provider = getRetailerProvider();
