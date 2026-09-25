@@ -90,3 +90,53 @@ export const KROGER_FAMILY_BANNERS: KrogerFamilyBanner[] = [
   { code: "PAYLESS", name: "Pay Less", region: "Central Indiana" },
   { code: "RULER", name: "Ruler Foods", region: "Indiana, Ohio & Kentucky" },
 ];
+
+export type CoverageTier = "covered" | "partial" | "none";
+
+/**
+ * Where Kroger-family stores exist, by state name (matches us-atlas). Built
+ * from live ZIP searches in AL, LA, KS, IL, FL, GA, NM, VA, OK and TX plus
+ * Kroger's known footprint; states not listed have no Kroger-family stores.
+ * A search covers ~10 miles, so "covered" still leaves gaps between metros.
+ */
+export const KROGER_COVERAGE: Record<string, { tier: CoverageTier; note: string }> = {
+  Alabama: { tier: "partial", note: "Huntsville area only" },
+  Alaska: { tier: "covered", note: "Fred Meyer" },
+  Arizona: { tier: "covered", note: "Fry's" },
+  Arkansas: { tier: "covered", note: "Kroger" },
+  California: { tier: "covered", note: "Ralphs, Food 4 Less, Foods Co" },
+  Colorado: { tier: "covered", note: "King Soopers, City Market" },
+  Delaware: { tier: "partial", note: "Harris Teeter, some areas" },
+  "District of Columbia": { tier: "covered", note: "Harris Teeter" },
+  Florida: { tier: "partial", note: "Harris Teeter in some metros" },
+  Georgia: { tier: "covered", note: "Kroger" },
+  Idaho: { tier: "covered", note: "Fred Meyer" },
+  Illinois: { tier: "partial", note: "Chicago area; downstate is thin" },
+  Indiana: { tier: "covered", note: "Kroger, Jay C, Pay Less, Ruler" },
+  Kansas: { tier: "partial", note: "Dillons around Wichita" },
+  Kentucky: { tier: "covered", note: "Kroger, Ruler" },
+  Louisiana: { tier: "partial", note: "Shreveport and New Orleans" },
+  Maryland: { tier: "covered", note: "Harris Teeter" },
+  Michigan: { tier: "covered", note: "Kroger" },
+  Mississippi: { tier: "covered", note: "Kroger" },
+  Missouri: { tier: "covered", note: "Kroger, Gerbes, Dillons" },
+  Nebraska: { tier: "covered", note: "Baker's" },
+  Nevada: { tier: "covered", note: "Smith's" },
+  "New Mexico": { tier: "covered", note: "Smith's" },
+  "North Carolina": { tier: "covered", note: "Harris Teeter" },
+  Ohio: { tier: "covered", note: "Kroger, Ruler" },
+  Oregon: { tier: "covered", note: "Fred Meyer, QFC" },
+  "South Carolina": { tier: "partial", note: "Harris Teeter, some Kroger" },
+  Tennessee: { tier: "covered", note: "Kroger" },
+  Texas: { tier: "partial", note: "Houston and Dallas; not Austin or San Antonio" },
+  Utah: { tier: "covered", note: "Smith's" },
+  Virginia: { tier: "covered", note: "Harris Teeter, Kroger" },
+  Washington: { tier: "covered", note: "QFC, Fred Meyer" },
+  "West Virginia": { tier: "covered", note: "Kroger" },
+  Wisconsin: { tier: "covered", note: "Pick 'n Save, Metro Market" },
+  Wyoming: { tier: "partial", note: "Smith's, a few towns" },
+};
+
+export function coverageTier(state: string): CoverageTier {
+  return KROGER_COVERAGE[state]?.tier ?? "none";
+}

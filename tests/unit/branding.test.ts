@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { getBannerLogoUrl, KROGER_FAMILY_BANNERS } from "@aislepilot/domain/branding";
+import {
+  coverageTier,
+  getBannerLogoUrl,
+  KROGER_COVERAGE,
+  KROGER_FAMILY_BANNERS,
+} from "@aislepilot/domain/branding";
 
 describe("getBannerLogoUrl", () => {
   it("returns a favicon URL for known Kroger-family banners", () => {
@@ -76,6 +81,25 @@ describe("KROGER_FAMILY_BANNERS", () => {
   it("every banner has a real logo mapping, so none falls back to a pin icon", () => {
     for (const b of KROGER_FAMILY_BANNERS) {
       expect(getBannerLogoUrl(b.code), b.code).toBeDefined();
+    }
+  });
+});
+
+describe("KROGER_COVERAGE", () => {
+  it("classifies states, with anything unlisted as none", () => {
+    expect(coverageTier("Virginia")).toBe("covered");
+    expect(coverageTier("Texas")).toBe("partial");
+    expect(coverageTier("New Jersey")).toBe("none");
+    expect(coverageTier("Pennsylvania")).toBe("none");
+  });
+
+  it("only lists real state names from the map data", async () => {
+    const us = (await import("us-atlas/states-10m.json")).default as {
+      objects: { states: { geometries: { properties: { name: string } }[] } };
+    };
+    const names = new Set(us.objects.states.geometries.map((g) => g.properties.name));
+    for (const state of Object.keys(KROGER_COVERAGE)) {
+      expect(names.has(state), state).toBe(true);
     }
   });
 });

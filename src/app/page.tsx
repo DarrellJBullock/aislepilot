@@ -13,6 +13,7 @@ import { Logo } from "@/components/app/Logo";
 import { Button } from "@/components/ui";
 import { LandingPreview } from "@/components/marketing/LandingPreview";
 import { Barcode } from "@/components/marketing/Barcode";
+import { CoverageMap } from "@/components/marketing/CoverageMap";
 import { KrogerFamilyList } from "@/components/stores/KrogerFamilyList";
 import { cn } from "@/lib/utils";
 
@@ -180,6 +181,24 @@ export default function LandingPage() {
             these, AislePilot covers it.
           </p>
           <KrogerFamilyList className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3" />
+        </section>
+
+        {/* Coverage */}
+        <section className="py-16">
+          <SectionKicker>Where does it work?</SectionKicker>
+          <h2 className="mt-2 text-center font-[family-name:var(--font-display)] text-3xl font-black uppercase tracking-tight text-[color:var(--ink)] sm:text-4xl">
+            Check your state before you sign up
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-[color:var(--ink-soft)]">
+            AislePilot uses live Kroger data, so it works where Kroger-family stores are. That
+            includes Maryland, D.C., Virginia and the Carolinas, but not yet New Jersey,
+            Pennsylvania or the rest of the Northeast.
+          </p>
+          <CoverageMap className="mx-auto mt-8 max-w-3xl" />
+          <p className="mx-auto mt-4 max-w-xl text-center text-xs text-[color:var(--ink-faint)]">
+            Even in a covered state, you’ll only see stores within about 10 miles of your ZIP
+            code. Search by ZIP to check yours.
+          </p>
         </section>
 
         {/* CTA */}
