@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, Alert } from "react-native";
-import { Search, Check, LocateFixed } from "lucide-react-native";
+import { Search, Check, LocateFixed, ChevronDown, ChevronRight } from "lucide-react-native";
 import * as Location from "expo-location";
 import type { Store } from "@aislepilot/domain/types";
 import { searchStores } from "../../lib/retailer";
 import { Input, Skeleton, Badge } from "../ui";
 import { StoreLogo } from "./StoreLogo";
+import { KrogerFamilyList } from "./KrogerFamilyList";
 import { cn } from "../../lib/cn";
 
 export function StorePicker({
@@ -20,6 +21,7 @@ export function StorePicker({
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
   const [locating, setLocating] = useState(false);
+  const [showBanners, setShowBanners] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -84,6 +86,28 @@ export function StorePicker({
           <LocateFixed size={18} color="#0c9152" />
         </Pressable>
       </View>
+
+      <Pressable
+        onPress={() => setShowBanners((v) => !v)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: showBanners }}
+        className="mb-2 flex-row items-center gap-1"
+      >
+        {showBanners ? (
+          <ChevronDown size={14} color="#0b7344" />
+        ) : (
+          <ChevronRight size={14} color="#0b7344" />
+        )}
+        <Text className="text-xs font-medium text-brand-700">Not sure which stores are included?</Text>
+      </Pressable>
+      {showBanners && (
+        <View className="mb-3">
+          <Text className="mb-2 text-xs text-ink-muted">
+            Any of these Kroger-family stores works — search by ZIP code near you.
+          </Text>
+          <KrogerFamilyList />
+        </View>
+      )}
 
       {offline && (
         <View className="mb-3 flex-row items-center gap-2">
