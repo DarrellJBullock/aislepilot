@@ -6,6 +6,7 @@ import type { Store } from "@aislepilot/domain/types";
 import { fetchStores } from "@/lib/retailer-client";
 import { Input, Skeleton, DemoBadge, Badge } from "@/components/ui";
 import { StoreLogo } from "./StoreLogo";
+import { KrogerFamilyList } from "./KrogerFamilyList";
 import { cn } from "@/lib/utils";
 
 export function StorePicker({
@@ -48,6 +49,16 @@ export function StorePicker({
           aria-label="Search stores"
         />
       </div>
+
+      <details className="group mb-3 text-sm">
+        <summary className="cursor-pointer select-none text-xs font-medium text-brand-700 hover:underline">
+          Not sure which stores are included?
+        </summary>
+        <p className="mt-2 text-xs text-ink-muted">
+          Any of these Kroger-family stores works — search by ZIP code near you.
+        </p>
+        <KrogerFamilyList className="mt-2 grid max-h-64 gap-2 overflow-y-auto sm:grid-cols-2" />
+      </details>
 
       {!live && (
         <div className="mb-3 flex items-center gap-2 text-xs text-ink-muted">

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getBannerLogoUrl } from "@aislepilot/domain/branding";
+import { getBannerLogoUrl, KROGER_FAMILY_BANNERS } from "@aislepilot/domain/branding";
 
 describe("getBannerLogoUrl", () => {
   it("returns a favicon URL for known Kroger-family banners", () => {
@@ -63,5 +63,19 @@ describe("getBannerLogoUrl", () => {
   it("is undefined for unrecognized or fictional banners", () => {
     expect(getBannerLogoUrl("Delaware Storm")).toBeUndefined();
     expect(getBannerLogoUrl(undefined)).toBeUndefined();
+  });
+});
+
+describe("KROGER_FAMILY_BANNERS", () => {
+  it("lists all 20 banners with unique codes and names", () => {
+    expect(KROGER_FAMILY_BANNERS).toHaveLength(20);
+    expect(new Set(KROGER_FAMILY_BANNERS.map((b) => b.code)).size).toBe(20);
+    expect(new Set(KROGER_FAMILY_BANNERS.map((b) => b.name)).size).toBe(20);
+  });
+
+  it("every banner has a real logo mapping, so none falls back to a pin icon", () => {
+    for (const b of KROGER_FAMILY_BANNERS) {
+      expect(getBannerLogoUrl(b.code), b.code).toBeDefined();
+    }
   });
 });

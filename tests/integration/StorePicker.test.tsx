@@ -24,4 +24,16 @@ describe("StorePicker", () => {
     // Live, just empty — must not be mistaken for the demo-data fallback.
     expect(screen.queryByText(/fictional demo stores/)).not.toBeInTheDocument();
   });
+
+  it("offers a list of every Kroger-family banner for shoppers unsure what counts", async () => {
+    vi.mocked(fetchStores).mockResolvedValue({ stores: [], live: true });
+
+    render(<StorePicker onChange={() => {}} />);
+
+    expect(screen.getByText("Not sure which stores are included?")).toBeInTheDocument();
+    for (const name of ["Harris Teeter", "Fred Meyer", "King Soopers", "Ruler Foods"]) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    await waitFor(() => expect(screen.getByText("No stores found.")).toBeInTheDocument());
+  });
 });

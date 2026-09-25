@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/app/Logo";
 import { Card, CardBody, Button } from "@/components/ui";
+import { KrogerFamilyList } from "@/components/stores/KrogerFamilyList";
 
 export const metadata: Metadata = { title: "How to use AislePilot" };
 
@@ -74,6 +75,14 @@ export default function HelpPage() {
               </li>
             ))}
           </ol>
+
+          <div className="mt-7">
+            <h2 className="font-semibold text-ink">Which stores work?</h2>
+            <p className="mt-0.5 text-sm text-ink-soft">
+              Any Kroger-family store. Search by ZIP code near you — these are the brands to look for:
+            </p>
+            <KrogerFamilyList className="mt-3 grid gap-2 sm:grid-cols-2" />
+          </div>
 
           <div className="mt-7 rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">
             <p className="font-semibold">A few things worth knowing</p>

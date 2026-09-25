@@ -58,3 +58,35 @@ export function getBannerLogoUrl(banner?: string): string | undefined {
   if (!domain) return undefined;
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
 }
+
+export interface KrogerFamilyBanner {
+  /** The `banner` code Kroger's live API returns for this chain's stores. */
+  code: string;
+  name: string;
+  /** Where its stores are, as confirmed by live store searches. */
+  region: string;
+}
+
+/** Every Kroger-family storefront brand, for showing users what "counts". */
+export const KROGER_FAMILY_BANNERS: KrogerFamilyBanner[] = [
+  { code: "KROGER", name: "Kroger", region: "Midwest & South" },
+  { code: "HART", name: "Harris Teeter", region: "DC, MD, VA, Carolinas & Southeast" },
+  { code: "RALPHS", name: "Ralphs", region: "Southern California" },
+  { code: "FOOD4LESS", name: "Food 4 Less", region: "California & Chicago area" },
+  { code: "FOODSCO", name: "Foods Co", region: "Northern & Central California" },
+  { code: "FRED", name: "Fred Meyer", region: "Pacific Northwest" },
+  { code: "QFC", name: "QFC", region: "Washington & Oregon" },
+  { code: "KINGSOOPERS", name: "King Soopers", region: "Colorado" },
+  { code: "CITYMARKET", name: "City Market", region: "Western Colorado & Rockies" },
+  { code: "SMITHS", name: "Smith's", region: "Utah, Nevada & the Mountain West" },
+  { code: "FRYS", name: "Fry's", region: "Arizona" },
+  { code: "DILLONS", name: "Dillons", region: "Kansas" },
+  { code: "BAKERS", name: "Baker's", region: "Nebraska" },
+  { code: "GERBES", name: "Gerbes", region: "Missouri" },
+  { code: "PICK N SAVE", name: "Pick 'n Save", region: "Wisconsin" },
+  { code: "METRO MARKET", name: "Metro Market", region: "Milwaukee area" },
+  { code: "MARIANOS", name: "Mariano's", region: "Chicago area" },
+  { code: "JAYC", name: "Jay C", region: "Indiana" },
+  { code: "PAYLESS", name: "Pay Less", region: "Central Indiana" },
+  { code: "RULER", name: "Ruler Foods", region: "Indiana, Ohio & Kentucky" },
+];

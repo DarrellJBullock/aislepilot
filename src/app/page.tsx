@@ -13,6 +13,7 @@ import { Logo } from "@/components/app/Logo";
 import { Button } from "@/components/ui";
 import { LandingPreview } from "@/components/marketing/LandingPreview";
 import { Barcode } from "@/components/marketing/Barcode";
+import { KrogerFamilyList } from "@/components/stores/KrogerFamilyList";
 import { cn } from "@/lib/utils";
 
 // This page intentionally runs its own type/color system (a grocery-receipt
@@ -166,6 +167,19 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Supported stores */}
+        <section className="py-16">
+          <SectionKicker>Supported stores</SectionKicker>
+          <h2 className="mt-2 text-center font-[family-name:var(--font-display)] text-3xl font-black uppercase tracking-tight text-[color:var(--ink)] sm:text-4xl">
+            Works at every Kroger-family store
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-[color:var(--ink-soft)]">
+            Kroger owns more grocery brands than most people realize. If your store is one of
+            these, AislePilot covers it.
+          </p>
+          <KrogerFamilyList className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3" />
         </section>
 
         {/* CTA */}
