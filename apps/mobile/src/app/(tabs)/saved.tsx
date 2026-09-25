@@ -1,16 +1,27 @@
-import { View, Text } from "react-native";
+import { View, Text, Share } from "react-native";
 // See src/app/shopping/[listId].tsx for why FlatList comes from
 // react-native-gesture-handler, not react-native, in this app.
 import { FlatList } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Bookmark, Receipt } from "lucide-react-native";
+import { Bookmark, Download, Receipt } from "lucide-react-native";
 import { formatCurrency } from "@aislepilot/domain/pricing";
+import { buildUserExport, exportFilename, itemsToCsv } from "@aislepilot/domain/export";
 import { useApp } from "../../store/context";
-import { Card, CardBody, ProductImage, PriceTag, EmptyState } from "../../components/ui";
+import { Button, Card, CardBody, ProductImage, PriceTag, EmptyState } from "../../components/ui";
 
 export default function Saved() {
   const insets = useSafeAreaInsets();
-  const { savedProducts, purchaseHistory } = useApp();
+  const { profile, lists, savedProducts, purchaseHistory } = useApp();
+
+  // Opens the system share sheet so the export can go to Files, email, Drive, etc.
+  const shareExport = (kind: "json" | "csv") =>
+    Share.share({
+      title: exportFilename(kind),
+      message:
+        kind === "json"
+          ? JSON.stringify(buildUserExport({ profile, lists, savedProducts, purchaseHistory }), null, 2)
+          : itemsToCsv(lists),
+    }).catch(() => {});
 
   return (
     <FlatList
@@ -49,6 +60,27 @@ export default function Saved() {
                   ))}
                 </View>
               )}
+            </CardBody>
+          </Card>
+
+          <Card className="mt-3">
+            <CardBody>
+              <View className="flex-row items-center gap-2">
+                <Download size={18} color="#0c9152" />
+                <Text className="font-semibold text-ink">Your data</Text>
+              </View>
+              <Text className="mt-1 text-sm text-ink-muted">
+                Export your lists, saved products and purchase history. JSON has everything; CSV
+                opens in a spreadsheet.
+              </Text>
+              <View className="mt-3 flex-row gap-2">
+                <Button variant="outline" size="sm" onPress={() => shareExport("json")}>
+                  Export JSON
+                </Button>
+                <Button variant="outline" size="sm" onPress={() => shareExport("csv")}>
+                  Export CSV
+                </Button>
+              </View>
             </CardBody>
           </Card>
 

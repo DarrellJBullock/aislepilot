@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, LogOut, Receipt, Database } from "lucide-react";
+import { User, LogOut, Receipt, Database, Download } from "lucide-react";
 import { useApp } from "@/lib/store/provider";
 import { formatCurrency } from "@aislepilot/domain/pricing";
+import { buildUserExport, exportFilename, itemsToCsv } from "@aislepilot/domain/export";
+import { downloadTextFile } from "@/lib/download";
 import { Card, CardBody, Input, Label, Button, Badge } from "@/components/ui";
 
 export function SettingsView() {
-  const { profile, updateProfile, signOut, purchaseHistory, savedProducts } = useApp();
+  const { backend, profile, lists, updateProfile, signOut, purchaseHistory, savedProducts } = useApp();
   const router = useRouter();
   const [name, setName] = useState(profile?.displayName ?? "");
   const [saved, setSaved] = useState(false);
@@ -88,6 +90,42 @@ export function SettingsView() {
       </Card>
 
       <Card>
+        <CardBody>
+          <h2 className="flex items-center gap-2 font-semibold text-ink">
+            <Download size={18} className="text-brand-600" /> Your data
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            Download your lists, items, saved products and purchase history. JSON has everything;
+            CSV opens in Excel or Google Sheets.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={() =>
+                downloadTextFile(
+                  exportFilename("json"),
+                  "application/json",
+                  JSON.stringify(
+                    buildUserExport({ profile, lists, savedProducts, purchaseHistory }),
+                    null,
+                    2,
+                  ),
+                )
+              }
+            >
+              <Download size={16} /> Download JSON
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => downloadTextFile(exportFilename("csv"), "text/csv", itemsToCsv(lists))}
+            >
+              <Download size={16} /> Download CSV
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
+
+      <Card>
         <CardBody className="flex items-center justify-between">
           <div>
             <p className="font-semibold text-ink">Sign out</p>
@@ -105,9 +143,11 @@ export function SettingsView() {
         </CardBody>
       </Card>
 
-      <p className="text-center text-xs text-ink-muted">
-        Running in demo mode — data is stored locally in your browser.
-      </p>
+      {backend === "local" && (
+        <p className="text-center text-xs text-ink-muted">
+          Running in demo mode — data is stored locally in your browser.
+        </p>
+      )}
     </div>
   );
 }

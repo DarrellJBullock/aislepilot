@@ -15,6 +15,7 @@
     "./pricing": "./src/pricing/index.ts",
     "./progress": "./src/progress/index.ts",
     "./routing": "./src/routing/index.ts",
+    "./export": "./src/export/index.ts",
     "./status": "./src/status/index.ts",
     "./status/location": "./src/status/location.ts",
     "./assignment": "./src/assignment/index.ts",
