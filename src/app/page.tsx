@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Big_Shoulders_Display, Figtree, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import {
   ArrowRight,
   ListChecks,
@@ -22,20 +22,29 @@ import { cn } from "@/lib/utils";
 // packages/design-tokens — the signed-in app keeps the standard system;
 // only the marketing page's look differs. Colors are CSS custom properties
 // on the page wrapper below so the rest of the app is untouched.
-const display = Big_Shoulders_Display({
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
+// Fonts are self-hosted (latin subset, SIL Open Font License — see
+// src/fonts/LICENSE-*.txt) so builds and page loads never depend on Google.
+const display = localFont({
+  src: "../fonts/big-shoulders-display-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-display",
+  display: "swap",
 });
-const body = Figtree({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const body = localFont({
+  src: "../fonts/figtree-latin-wght-normal.woff2",
+  weight: "300 900",
   variable: "--font-body",
+  display: "swap",
 });
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const mono = localFont({
+  src: [
+    { path: "../fonts/ibm-plex-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/ibm-plex-mono-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/ibm-plex-mono-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/ibm-plex-mono-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-mono",
+  display: "swap",
 });
 
 const FEATURES = [
