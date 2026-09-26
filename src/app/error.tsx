@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { reportError } from "@/lib/monitoring";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 import { Logo } from "@/components/app/Logo";
@@ -14,7 +15,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    reportError(error);
   }, [error]);
 
   return (

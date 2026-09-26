@@ -23,6 +23,7 @@
     "@aislepilot/design-tokens": "*",
     "@aislepilot/domain": "*",
     "@aislepilot/validation": "*",
+    "@sentry/nextjs": "^8.55.2",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "d3-geo": "^3.1.1",

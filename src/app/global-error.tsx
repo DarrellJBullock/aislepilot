@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { reportError } from "@/lib/monitoring";
 
 // Catches errors thrown by the root layout itself — error.tsx can't cover
 // those since it renders inside the layout. Must render its own <html>/<body>
@@ -14,7 +15,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    reportError(error);
   }, [error]);
 
   return (

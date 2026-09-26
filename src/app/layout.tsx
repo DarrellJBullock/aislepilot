@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "@/styles/globals.css";
 import { AppProvider } from "@/lib/store/provider";
+import { ErrorMonitoring } from "@/components/system/ErrorMonitoring";
 import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
@@ -38,6 +40,17 @@ export default function RootLayout({
       <body className="min-h-screen bg-[var(--background)] text-ink antialiased">
         <AppProvider>{children}</AppProvider>
         <ServiceWorkerRegister />
+        <ErrorMonitoring />
+        {/* Vercel Web Analytics: cookieless page-view counts, production only.
+            It reports once Web Analytics is enabled for the project in Vercel. */}
+        {process.env.VERCEL_ENV === "production" && (
+          <>
+            <Script id="vercel-analytics" strategy="afterInteractive">
+              {`window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };`}
+            </Script>
+            <Script src="/_vercel/insights/script.js" strategy="afterInteractive" defer />
+          </>
+        )}
       </body>
     </html>
   );

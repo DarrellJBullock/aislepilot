@@ -41,7 +41,14 @@ export default function PrivacyPage() {
             for how they handle that request.
           </li>
           <li>
-            <strong>Vercel</strong> — hosts the app itself.
+            <strong>Vercel</strong> — hosts the app itself, and provides Vercel Web Analytics,
+            which counts page views and visitors in aggregate without cookies and without
+            tracking you across other sites.
+          </li>
+          <li>
+            <strong>Sentry</strong> — receives error reports when the app crashes (the error,
+            the page it happened on without any search terms, and your browser type). We
+            don&apos;t send your name, email, or list contents.
           </li>
         </ul>
         <p className="mt-2">We don&apos;t sell your data, and we don&apos;t share it for advertising.</p>

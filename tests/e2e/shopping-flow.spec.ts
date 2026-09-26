@@ -68,9 +68,13 @@ test("scan a barcode to add a matched item", async ({ page, context }) => {
   await expect(page.getByRole("dialog")).toBeVisible();
 
   // Fall back to manual entry (no real camera in CI); the field appears either
-  // immediately (unsupported) or after the camera fails.
+  // immediately (unsupported) or after the camera fails. The link can vanish
+  // mid-click when the camera failure switches to manual mode on its own —
+  // that's the outcome we want, so a failed click is fine.
   const manualLink = page.getByRole("button", { name: /Enter the number instead/ });
-  if (await manualLink.isVisible().catch(() => false)) await manualLink.click();
+  if (await manualLink.isVisible().catch(() => false)) {
+    await manualLink.click({ timeout: 2_000 }).catch(() => {});
+  }
 
   const upc = page.getByLabel(/Barcode number/);
   await expect(upc).toBeVisible({ timeout: 10_000 });
